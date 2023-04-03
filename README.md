@@ -1,13 +1,11 @@
 # Base Rush
 
-Ongoing project
-
-Bryan
+## Bryan
 - Arrow in Player class
 - 
 
-Ivan
+## Ivan
 - 
 
-Must
+## Must
 - Learn how to use Threads
