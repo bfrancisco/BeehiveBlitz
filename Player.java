@@ -1,37 +1,22 @@
 import java.awt.*;
+import java.awt.geom.*;
 
-public class Player{
-    private int xPos, yPos;
-    private int scale;
+public class Player extends ObjectProperties{
+
+    private Ball ball;
+    // private Arrow arrow;
+    // private Trail trail; <-- can be in Ball class
+    // private int power; <-- can be in Ball class
+    // private double angle <-- can be in Ball class
+
+    public Player(double x, double y, double w, double h){
+        super(x, y, w, h);
+        ball = new Ball(posX, posY, width, height, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
+    }
+    public void draw(Graphics2D g2d, AffineTransform reset){
+        // draw everything here
+        g2d.setTransform(reset);
+    }
+
     
-    // private int power;
-
-    // private double angle;
-
-    // temporary values
-    private int hSpeed = 10;
-    private int vSpeed = 10;
-
-    public Player(int initX, int initY){
-        xPos = initX; yPos = initY;
-        scale = 25;
-        // angle = 120;
-    }
-    public void draw(Graphics g){
-        g.fillOval(xPos, yPos, scale, scale);
-    }
-
-    public int getX(){return xPos;}
-    public int getY(){return yPos;}
-    public int getWidth(){return scale;}
-    public int getHeight(){return scale;}
-    // public double getAngle(){return angle;}
-
-    public void adjustX(){xPos += hSpeed;}
-    public void adjustY(){yPos += vSpeed;}
-
-    // public void adjustAngle(double delta){angle += delta;}
-
-    public void invertXDirection(){hSpeed *= -1;}
-    public void invertYDirection(){vSpeed *= -1;}
 }

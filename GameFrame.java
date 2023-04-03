@@ -8,7 +8,7 @@ public class GameFrame{
     private JFrame gameFrame;
     private GameCanvas gameCanvas;
 
-    private Timer movementTimer;
+    // private Timer movementTimer;
 
     public GameFrame(int width, int height){
         screenWidth = width; screenHeight = height;
@@ -25,29 +25,31 @@ public class GameFrame{
         gameFrame.setVisible(true);
     }
 
-    private class TimeListener implements ActionListener{
-        @Override
-        public void actionPerformed(ActionEvent ae){
-            Object o = ae.getSource();
-            if (o == movementTimer){
-                if(gameCanvas.getPlayer(1).getX() + gameCanvas.getPlayer(1).getWidth() >= screenWidth) {
-                    gameCanvas.getPlayer(1).invertXDirection();
-                }else if(gameCanvas.getPlayer(1).getX() <= 0) {
-                    gameCanvas.getPlayer(1).invertXDirection();
-                }gameCanvas.getPlayer(1).adjustX();
+    // private class TimeListener implements ActionListener{
+    //     @Override
+    //     public void actionPerformed(ActionEvent ae){
+    //         Object o = ae.getSource();
+            
+    //         if (o == movementTimer){
+    //             if(gameCanvas.getPlayer(1).getX() + gameCanvas.getPlayer(1).getWidth() >= screenWidth) {
+    //                 gameCanvas.getPlayer(1).invertXDirection();
+    //             }else if(gameCanvas.getPlayer(1).getX() <= 0) {
+    //                 gameCanvas.getPlayer(1).invertXDirection();
+    //             }gameCanvas.getPlayer(1).adjustX();
 
-                if(gameCanvas.getPlayer(1).getY() + gameCanvas.getPlayer(1).getHeight() >= screenHeight) {
-                    gameCanvas.getPlayer(1).invertYDirection();
-                }else if(gameCanvas.getPlayer(1).getY() <= 0) {
-                    gameCanvas.getPlayer(1).invertYDirection();
-                }gameCanvas.getPlayer(1).adjustY();
-                gameCanvas.repaint();
-            }
-        }
-    }
+    //             if(gameCanvas.getPlayer(1).getY() + gameCanvas.getPlayer(1).getHeight() >= screenHeight) {
+    //                 gameCanvas.getPlayer(1).invertYDirection();
+    //             }else if(gameCanvas.getPlayer(1).getY() <= 0) {
+    //                 gameCanvas.getPlayer(1).invertYDirection();
+    //             }gameCanvas.getPlayer(1).adjustY();
+    //         }
+    //         gameCanvas.repaint();
+    //     }
+    // }
+
     public void setUpListeners(){
-        TimeListener tl = new TimeListener();
-        movementTimer = new Timer(20, tl);
-        movementTimer.start();
+        // TimeListener tl = new TimeListener();
+        // movementTimer = new Timer(20, tl);
+        // movementTimer.start();
     }
 }

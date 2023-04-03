@@ -1,2 +1,3 @@
-# BaseRush
-BaseRush
+# Base Rush
+
+Ongoing project

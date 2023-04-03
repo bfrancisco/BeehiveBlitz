@@ -3,5 +3,6 @@ public class GameStarter{
         GameFrame gameFrame = new GameFrame(1280, 720);
         gameFrame.setUpGUI();
         gameFrame.setUpListeners();
+        
     }
 }
