@@ -3,17 +3,20 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class GameCanvas extends JComponent{
-    private int canvasWidth, canvasHeight;
-    private Player player1;
 
+public class GameCanvas extends JComponent{
+    private int width, height;
+    private Ball ball;
     // private Timer movementTimer;
     // private double rad;
     // private int baseSpeed = 10;
 
-    public GameCanvas(int width, int height){
-        canvasWidth = width;
-        canvasHeight = height;
+    public GameCanvas(int w, int h){
+        width = w;
+        height = h;
+        this.setPreferredSize(new Dimension(width, height));
+
+        ball = new Ball(width/2, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
     }
 
     @Override
@@ -23,10 +26,21 @@ public class GameCanvas extends JComponent{
         g2d.setRenderingHints(rh);
         AffineTransform af = g2d.getTransform();
         
-        player1.draw(g2d, af);
+        ball.draw(g2d, af);
     }
 
-    public Player getPlayer(int playerNum){
-        return player1;
+    public void SetUpMovement(){
+        Timer movementTimer = new Timer(20, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ball.moveAngle();
+                repaint();
+            }
+        });
+        movementTimer.start();
+    }
+
+    public Ball getBall(){
+        return ball;
     }
 }

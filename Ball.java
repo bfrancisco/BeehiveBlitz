@@ -2,13 +2,13 @@ import java.awt.*;
 import java.awt.geom.*;
 
 public class Ball extends ObjectProperties {
-    // (posX, posY) is center of the ellipse.
-    private double posX, posY, width, height;
+    // (posX, posY) is the center of the ball.
     private double speedX, speedY;
-    private Color fill;
-    private Color outlineFill;
+    private Color fill, outlineFill;
     private BasicStroke outlineWidth;
     private Ellipse2D.Double ball;
+    private double angle, angleSensitivity; // in radians
+    private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
 
     public Ball(double x, double y, double w, double h, double sx, double sy, Color fill, Color outlineFill, int outlineWidth){
         super(x, y, w, h);
@@ -17,6 +17,9 @@ public class Ball extends ObjectProperties {
         this.fill = fill;
         this.outlineFill = outlineFill;
         this.outlineWidth = new BasicStroke(outlineWidth);
+        angle = 0;
+        angleSensitivity = 0.3;
+        angleMovement = 0;
         generateShape();
     }
 
@@ -25,6 +28,7 @@ public class Ball extends ObjectProperties {
     }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
+        g2d.rotate(angle, posX, posY);
         g2d.setPaint(fill);
         g2d.fill(ball);
         g2d.setPaint(outlineFill);
@@ -33,10 +37,24 @@ public class Ball extends ObjectProperties {
         g2d.setTransform(reset);
     }
 
-    // mutator functions
-    public void adjustX(){posX += speedX;}
-    public void adjustY(){posY += speedY;}
+    // Mutator Functions
     public void invertXDirection(){speedX *= -1;}
     public void invertYDirection(){speedY *= -1;}
+
+    // For Controls
+    public void setAngleMovement(String command){
+        if (command.equals("cw")) angleMovement = 1;
+        else if (command.equals("ccw")) angleMovement = 2;
+        else if (command.equals("stop")) angleMovement = 0;
+        else System.out.println("command: " + command);
+        // System.out.println("angleMovement: " + angleMovement);
+    }
+    public void moveAngle(){
+        // System.out.println(angle);
+        if (angleMovement == 1) angle -= angleSensitivity;
+        else if (angleMovement == 2) angle += angleSensitivity;
+    }
+
+    
     
 }

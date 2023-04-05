@@ -17,39 +17,46 @@ public class GameFrame{
     }
 
     public void setUpGUI(){
+        gameFrame.setTitle("Base Rush");
         gameCanvas.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         gameFrame.add(gameCanvas);
-    
         gameFrame.pack();
+        gameCanvas.SetUpMovement();
+        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setVisible(true);
+        
     }
 
-    // private class TimeListener implements ActionListener{
-    //     @Override
-    //     public void actionPerformed(ActionEvent ae){
-    //         Object o = ae.getSource();
-            
-    //         if (o == movementTimer){
-    //             if(gameCanvas.getPlayer(1).getX() + gameCanvas.getPlayer(1).getWidth() >= screenWidth) {
-    //                 gameCanvas.getPlayer(1).invertXDirection();
-    //             }else if(gameCanvas.getPlayer(1).getX() <= 0) {
-    //                 gameCanvas.getPlayer(1).invertXDirection();
-    //             }gameCanvas.getPlayer(1).adjustX();
+    public void setKeyBindings(){
+        JPanel cp = (JPanel) gameFrame.getContentPane();
+        cp.setFocusable(true);
 
-    //             if(gameCanvas.getPlayer(1).getY() + gameCanvas.getPlayer(1).getHeight() >= screenHeight) {
-    //                 gameCanvas.getPlayer(1).invertYDirection();
-    //             }else if(gameCanvas.getPlayer(1).getY() <= 0) {
-    //                 gameCanvas.getPlayer(1).invertYDirection();
-    //             }gameCanvas.getPlayer(1).adjustY();
-    //         }
-    //         gameCanvas.repaint();
-    //     }
-    // }
+        ActionMap am = cp.getActionMap();
+        InputMap im = cp.getInputMap();
 
-    public void setUpListeners(){
-        // TimeListener tl = new TimeListener();
-        // movementTimer = new Timer(20, tl);
-        // movementTimer.start();
+        am.put("cw", new MoveAction("cw"));
+        am.put("ccw", new MoveAction("ccw"));
+        am.put("stop", new MoveAction("stop"));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "cw");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "ccw");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "stop");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stop");
+        
     }
+
+    private class MoveAction extends AbstractAction {
+        private String command;
+
+        public MoveAction(String com){
+          command = com;
+        }
+    
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+          gameCanvas.getBall().setAngleMovement(command);
+        }
+    }
+    
 }
