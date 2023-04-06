@@ -9,7 +9,6 @@ public class Ball extends ObjectProperties {
     private Ellipse2D.Double ball;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
-
     private boolean toMove; 
 
     public Ball(double x, double y, double w, double h, double sx, double sy, Color fill, Color outlineFill, int outlineWidth){
@@ -23,7 +22,6 @@ public class Ball extends ObjectProperties {
         angleSensitivity = 0.3;
         angleMovement = 0;
         toMove = false;
-        // generateShape();
     }
 
     public void generateShape(){
@@ -59,14 +57,14 @@ public class Ball extends ObjectProperties {
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
     }
-    public double getAngle(){return (angle*(180/Math.PI))%360;}
+    public double getAngle(){return (angle*(Math.PI/180))%360;}
     
     public void setMovement(String command){
         if (command.equals("stopMove")) toMove = false;
         else if (command.equals("move")) toMove = true;
     }
 
-    public boolean getMovement(){return toMove;}
+    public boolean isMoving(){return toMove;}
 
     public void move(){
         if (toMove){

@@ -68,7 +68,7 @@ public class GameFrame{
             
             if (command.equals("print")){
                 System.out.print(gameCanvas.getBall().getX());
-                System.out.print(" " +  gameCanvas.getBall().getY() + gameCanvas.getBall().getMovement()+ "\n");
+                System.out.print(" " +  gameCanvas.getBall().getY() + gameCanvas.getBall().isMoving()+ "\n");
             }
             else if (!command.equals("move") && !command.equals("stopMove")){
                 gameCanvas.getBall().setAngleMovement(command);
