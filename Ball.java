@@ -18,7 +18,7 @@ public class Ball extends ObjectProperties {
         this.fill = fill;
         this.outlineFill = outlineFill;
         this.outlineWidth = new BasicStroke(outlineWidth);
-        angle = 0;
+        angle = -1.570796327; // -90 deg. in radians
         angleSensitivity = 0.3;
         angleMovement = 0;
         toMove = false;
