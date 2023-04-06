@@ -26,13 +26,13 @@ public class Ball extends ObjectProperties {
         // generateShape();
     }
 
-    // public void generateShape(){
-    //     ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
-    // }
+    public void generateShape(){
+        ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
+    }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
-        ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
+        generateShape();
         g2d.rotate(angle, posX, posY);
         g2d.setPaint(fill);
         g2d.fill(ball);
