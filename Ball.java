@@ -10,6 +10,8 @@ public class Ball extends ObjectProperties {
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
 
+    private boolean toMove; 
+
     public Ball(double x, double y, double w, double h, double sx, double sy, Color fill, Color outlineFill, int outlineWidth){
         super(x, y, w, h);
         speedX = sx;
@@ -20,14 +22,17 @@ public class Ball extends ObjectProperties {
         angle = 0;
         angleSensitivity = 0.3;
         angleMovement = 0;
-        generateShape();
+        toMove = false;
+        // generateShape();
     }
 
-    public void generateShape(){
-        ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
-    }
+    // public void generateShape(){
+    //     ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
+    // }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
+        // System.out.println(posX + " " + posY);
+        ball = new Ellipse2D.Double(posX-width/2, posY-height/2, width, height);
         g2d.rotate(angle, posX, posY);
         g2d.setPaint(fill);
         g2d.fill(ball);
@@ -54,7 +59,19 @@ public class Ball extends ObjectProperties {
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
     }
+    public double getAngle(){return (angle*(180/Math.PI))%360;}
+    
+    public void setMovement(String command){
+        if (command.equals("stopMove")) toMove = false;
+        else if (command.equals("move")) toMove = true;
+    }
 
-    
-    
+    public boolean getMovement(){return toMove;}
+
+    public void move(){
+        if (toMove){
+            posX += Math.cos(angle)*speedX;
+            posY += Math.sin(angle)*speedY;
+        }
+    }
 }

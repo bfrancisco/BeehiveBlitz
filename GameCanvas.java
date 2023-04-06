@@ -27,6 +27,7 @@ public class GameCanvas extends JComponent{
         AffineTransform af = g2d.getTransform();
         
         ball.draw(g2d, af);
+        // System.out.println("repainting");
     }
 
     public void SetUpMovement(){
@@ -34,6 +35,7 @@ public class GameCanvas extends JComponent{
             @Override
             public void actionPerformed(ActionEvent ae) {
                 ball.moveAngle();
+                ball.move();
                 repaint();
             }
         });

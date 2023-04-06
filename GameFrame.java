@@ -39,10 +39,20 @@ public class GameFrame{
         am.put("ccw", new MoveAction("ccw"));
         am.put("stop", new MoveAction("stop"));
 
+        am.put("print", new MoveAction("print"));
+
+        am.put("move", new MoveAction("move"));
+        am.put("stopMove", new MoveAction("stopMove"));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "cw");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "ccw");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "stop");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stop");
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "print");
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "move");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true), "stopMove");
         
     }
 
@@ -55,7 +65,17 @@ public class GameFrame{
     
         @Override
         public void actionPerformed(ActionEvent ae) {
-          gameCanvas.getBall().setAngleMovement(command);
+            
+            if (command.equals("print")){
+                System.out.print(gameCanvas.getBall().getX());
+                System.out.print(" " +  gameCanvas.getBall().getY() + gameCanvas.getBall().getMovement()+ "\n");
+            }
+            else if (!command.equals("move") && !command.equals("stopMove")){
+                gameCanvas.getBall().setAngleMovement(command);
+            }
+            else{
+                gameCanvas.getBall().setMovement(command);
+            }
         }
     }
     
