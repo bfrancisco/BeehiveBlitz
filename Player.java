@@ -16,7 +16,12 @@ public class Player extends ObjectProperties{
     public void draw(Graphics2D g2d, AffineTransform reset){
         // draw everything here
         ball.draw(g2d, reset);
+        
         g2d.setTransform(reset);
+    }
+
+    public void test(){
+        System.out.println("ey");
     }
 
     
