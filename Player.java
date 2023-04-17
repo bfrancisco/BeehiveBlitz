@@ -19,10 +19,4 @@ public class Player extends ObjectProperties{
         
         g2d.setTransform(reset);
     }
-
-    public void test(){
-        System.out.println("eh eh eh eh ey");
-    }
-
-    
 }
