@@ -21,7 +21,7 @@ public class Player extends ObjectProperties{
     }
 
     public void test(){
-        System.out.println("ey");
+        System.out.println("eh eh eh eh ey");
     }
 
     
