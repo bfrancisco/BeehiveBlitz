@@ -20,9 +20,9 @@ public abstract class ObjectProperties {
     public double getWidth() {return width;}
     public double getHeight() {return height;}
 
-    //Mutator Functions
-    public void addX(double v){posX += v;}
-    public void addY(double v){posY += v;}
+    //Setter Functions
+    public void setX(double v){posX = v;}
+    public void setY(double v){posY = v;}
 
     abstract void draw(Graphics2D g2d, AffineTransform reset);
 }

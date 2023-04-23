@@ -57,7 +57,7 @@ public class Ball extends ObjectProperties {
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
     }
-    public double getAngle(){return (angle*(180/Math.PI))%360;}
+    public double getAngle(){return angle;}
     
     public void setMovement(String command){
         if (command.equals("stopMove")) toMove = false;
@@ -72,4 +72,5 @@ public class Ball extends ObjectProperties {
             posY += Math.sin(angle)*speedY;
         }
     }
+    public void setAngle(double theta){angle = theta;}
 }

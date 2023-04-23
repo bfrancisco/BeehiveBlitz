@@ -3,10 +3,20 @@ import java.awt.geom.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.io.*;
+import java.net.*;
 
 public class GameCanvas extends JComponent{
     private int width, height;
-    private Ball ball;
+    private Ball you;
+    private Ball enemy;
+
+    private int playerID;
+
+    private Socket socket;
+
+    private ReadFromServer rfsRunnable;
+    private WriteToServer wtsRunnable;
     // private Timer movementTimer;
     // private double rad;
     // private int baseSpeed = 10;
@@ -15,8 +25,17 @@ public class GameCanvas extends JComponent{
         width = w;
         height = h;
         this.setPreferredSize(new Dimension(width, height));
+    }
 
-        ball = new Ball(width/2, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
+    public void setUpSprites(){
+        if (playerID == 1){
+            you = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
+            enemy = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, Color.RED, Color.BLACK, 1);
+        }
+        else{
+            enemy = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, Color.RED, Color.BLACK, 1);
+            you = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
+        }
     }
 
     @Override
@@ -26,23 +45,118 @@ public class GameCanvas extends JComponent{
         g2d.setRenderingHints(rh);
         AffineTransform af = g2d.getTransform();
         
-        ball.draw(g2d, af);
-        // System.out.println("repainting");
+        you.draw(g2d, af);
+        enemy.draw(g2d, af);
+
+        double prevX = enemy.getX();
+        double prevA = enemy.getAngle();
+
+        // check if data is transferred
+        if (enemy.getX() != prevX && enemy.getAngle() != prevA){
+            System.out.println(enemy.getX());
+            System.out.println(enemy.getY());
+            System.out.println(enemy.getAngle());
+        }
     }
 
     public void SetUpMovement(){
         Timer movementTimer = new Timer(20, new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ball.moveAngle();
-                ball.move();
+                you.moveAngle();
+                you.move();
                 repaint();
             }
         });
         movementTimer.start();
     }
 
-    public Ball getBall(){
-        return ball;
+    public void connectToServer(){
+        System.out.println("Client");
+        try{
+            socket = new Socket("localhost", 51734);
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            playerID = in.readInt();
+            System.out.println("Connected as p#" + playerID);
+            rfsRunnable = new ReadFromServer(in);
+            wtsRunnable = new WriteToServer(out);
+            rfsRunnable.waitForStartMsg();
+        }catch (IOException ex){
+            System.out.println("Server not found");
+        }
     }
+
+    private class ReadFromServer implements Runnable{
+
+        private DataInputStream dataIn;
+
+        public ReadFromServer(DataInputStream in){
+            dataIn = in;
+            System.out.println("RFS Runnable created");
+        }
+
+        public void run(){
+            try{
+                while (true){
+                    if (enemy != null){
+                        enemy.setX(dataIn.readDouble());
+                        enemy.setY(dataIn.readDouble());
+                        enemy.setAngle(dataIn.readDouble());
+                    }
+                }
+            }catch (IOException ex){
+                System.out.println("IOException from RFS run");
+            }
+        }
+
+        public void waitForStartMsg(){
+            try{
+                String startMsg = dataIn.readUTF();
+                System.out.println("Message from server: " + startMsg);
+                
+                Thread readThread = new Thread(rfsRunnable);
+                Thread writeThread = new Thread(wtsRunnable);
+                readThread.start();
+                writeThread.start();
+                
+            }catch (IOException ex){
+                System.out.println("IOException for wait for start");
+            }
+        }
+    }
+
+    private class WriteToServer implements Runnable{
+
+        private DataOutputStream dataOut;
+
+        public WriteToServer(DataOutputStream out){
+            dataOut = out;
+            System.out.println("WTS Runnable created");
+        }
+
+        public void run(){
+            try{
+                while (true){
+                    if (you != null){
+                        dataOut.writeDouble(you.getX());
+                        dataOut.writeDouble(you.getY());
+                        dataOut.writeDouble(you.getAngle());
+                        dataOut.flush();
+                    }
+                    try{
+                        Thread.sleep(25);
+                    }catch (InterruptedException ex){
+                        System.out.println("InterruptedException fr wts run");
+                    }
+                }
+            } catch (IOException ex){
+                System.out.println("IOException from wts run");
+            }
+        }
+    }
+
+    // get methods
+    public Ball getBall(){return you;}
+    public int getPlayerID(){return playerID;}
 }

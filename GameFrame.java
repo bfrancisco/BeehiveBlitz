@@ -8,8 +8,6 @@ public class GameFrame{
     private JFrame gameFrame;
     private GameCanvas gameCanvas;
 
-    // private Timer movementTimer;
-
     public GameFrame(int width, int height){
         screenWidth = width; screenHeight = height;
         gameFrame = new JFrame();
@@ -17,15 +15,15 @@ public class GameFrame{
     }
 
     public void setUpGUI(){
-        gameFrame.setTitle("Base Rush");
+        gameFrame.setTitle("Base Rush: Player# " + gameCanvas.getPlayerID());
         gameCanvas.setPreferredSize(new Dimension(screenWidth, screenHeight));
         
         gameFrame.add(gameCanvas);
         gameFrame.pack();
+        gameCanvas.setUpSprites();
         gameCanvas.SetUpMovement();
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setVisible(true);
-        
+        gameFrame.setVisible(true);      
     }
 
     public void setKeyBindings(){
@@ -78,5 +76,6 @@ public class GameFrame{
             }
         }
     }
-    
+
+    public void connectToServer(){gameCanvas.connectToServer();}
 }
