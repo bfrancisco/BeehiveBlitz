@@ -7,6 +7,9 @@ import java.io.*;
 import java.net.*;
 
 public class GameCanvas extends JComponent{
+    private static final String P1SPRITE = "assets/player1.png";
+    private static final String P2SPRITE = "assets/player2.png";
+
     private int width, height;
     private Ball you;
     private Ball enemy;
@@ -27,14 +30,20 @@ public class GameCanvas extends JComponent{
         this.setPreferredSize(new Dimension(width, height));
     }
 
+    public void setUpBG( Graphics2D g2d, AffineTransform af){
+        g2d.setPaint(Color.decode("#292B29"));
+        g2d.fillRect(0, 0, width, height);
+        g2d.setTransform(af);
+    }
+
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
-            enemy = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, Color.RED, Color.BLACK, 1);
+            you = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, P1SPRITE);
+            enemy = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, P2SPRITE);
         }
         else{
-            enemy = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, Color.RED, Color.BLACK, 1);
-            you = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, Color.BLUE, Color.BLACK, 1);
+            enemy = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, P1SPRITE);
+            you = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, P2SPRITE);
         }
     }
 
@@ -45,6 +54,7 @@ public class GameCanvas extends JComponent{
         g2d.setRenderingHints(rh);
         AffineTransform af = g2d.getTransform();
         
+        setUpBG(g2d, af);
         you.draw(g2d, af);
         enemy.draw(g2d, af);
 
