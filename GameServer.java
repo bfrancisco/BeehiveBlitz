@@ -96,9 +96,6 @@ public class GameServer{
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
-                        // System.out.println(p1x);
-                        // System.out.println(p1y);
-                        // System.out.println(p1a);
                     }else{
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
@@ -127,13 +124,21 @@ public class GameServer{
 
         public void run(){
             try{
-                while (true){
-                    if (playerID == 1){
+                while(true){
+                    // System.out.println(playerID);
+                    if(playerID == 1){
+                        // System.out.println(p2x);
+                        // System.out.println(p2y);
+                        // System.out.println(p2a);
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
                         dataOut.flush();
-                    }else{
+                    }
+                    else{
+                        // System.out.println(p1x);
+                        // System.out.println(p1y);
+                        // System.out.println(p1a);
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
@@ -146,7 +151,7 @@ public class GameServer{
                     }
                 }
             }catch (IOException ex){
-                System.out.println("IOException from wts run");
+                System.out.println("IOException from wtc run");
             }
         }
 

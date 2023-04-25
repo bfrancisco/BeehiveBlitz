@@ -14,6 +14,8 @@ public class GameCanvas extends JComponent{
     private Ball you;
     private Ball enemy;
 
+    private boolean enemyExists = false;
+
     private int playerID;
 
     private Socket socket;
@@ -57,6 +59,8 @@ public class GameCanvas extends JComponent{
         setUpBG(g2d, af);
         you.draw(g2d, af);
         enemy.draw(g2d, af);
+        
+        enemyExists = true;
 
         double prevX = enemy.getX();
         double prevA = enemy.getAngle();
@@ -109,11 +113,19 @@ public class GameCanvas extends JComponent{
         public void run(){
             try{
                 while (true){
-                    if (enemy != null){
-                        enemy.setX(dataIn.readDouble());
-                        enemy.setY(dataIn.readDouble());
-                        enemy.setAngle(dataIn.readDouble());
+                    if (enemyExists){
+                        // System.out.println("Enemy is not null");
+                        double ex = dataIn.readDouble();
+                        double ey = dataIn.readDouble();
+                        double eA = dataIn.readDouble();
+                        // System.out.println(ex);
+                        // System.out.println(ey);
+                        // System.out.println(eA);
+                        enemy.setX(ex);
+                        enemy.setY(ey);
+                        enemy.setAngle(eA);
                     }
+                    else System.out.println("Enemy is null");
                 }
             }catch (IOException ex){
                 System.out.println("IOException from RFS run");
@@ -148,7 +160,7 @@ public class GameCanvas extends JComponent{
         public void run(){
             try{
                 while (true){
-                    if (you != null){
+                    if (enemyExists){
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
                         dataOut.writeDouble(you.getAngle());

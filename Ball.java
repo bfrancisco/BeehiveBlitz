@@ -45,7 +45,7 @@ public class Ball extends ObjectProperties {
 
     // For Controls
     public void setAngleMovement(String command){
-        System.out.println(command);
+        // System.out.println(command);
         if (command.equals("cw")) angleMovement = 1;
         else if (command.equals("ccw")) angleMovement = 2;
         else if (command.equals("stop")) angleMovement = 0;
