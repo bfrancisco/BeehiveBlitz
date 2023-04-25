@@ -28,6 +28,7 @@ public class GameFrame{
 
     public void setKeyBindings(){
         JPanel cp = (JPanel) gameFrame.getContentPane();
+        // manually 
         cp.setFocusable(true);
 
         ActionMap am = cp.getActionMap();

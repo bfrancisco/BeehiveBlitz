@@ -3,7 +3,8 @@ import java.awt.geom.*;
 
 public class Ball extends ObjectProperties {
     // (posX, posY) is the center of the ball.
-    private static final double RAD90 = 1.570796327;
+    private static final double RAD90 = 1.57; // 1.570796327
+    private static final double ANGLESENS = 0.2;
 
     private double speedX, speedY;
     private double angle, angleSensitivity; // in radians
@@ -18,7 +19,7 @@ public class Ball extends ObjectProperties {
         speedX = sx;
         speedY = sy;
         angle = RAD90;
-        angleSensitivity = 0.17;
+        angleSensitivity = ANGLESENS;
         angleMovement = 0;
         toMove = false;
         sprite = t.getImage(spritefile);
@@ -56,6 +57,9 @@ public class Ball extends ObjectProperties {
         // System.out.println(angle);
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
+
+        if (angle > RAD90*4) angle -= RAD90*4;
+        if (angle < 0) angle += RAD90*4;
     }
     public double getAngle(){return angle;}
     
@@ -68,8 +72,8 @@ public class Ball extends ObjectProperties {
 
     public void move(){
         if (toMove){
-            posX += Math.cos(angle)*speedX;
-            posY += Math.sin(angle)*speedY;
+            posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
+            posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
         }
     }
     public void setAngle(double theta){angle = theta;}

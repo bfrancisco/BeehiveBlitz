@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.Timer;
 
 public class GameServer{
     
@@ -121,7 +122,7 @@ public class GameServer{
             dataOut = out;
             System.out.println("WTC" + playerID + " Runnable created");
         }
-
+        
         public void run(){
             try{
                 while(true){
@@ -130,6 +131,8 @@ public class GameServer{
                         // System.out.println(p2x);
                         // System.out.println(p2y);
                         // System.out.println(p2a);
+                        
+                        
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
