@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
-import java.util.Timer;
+// import java.util.Timer;
+import javax.swing.Timer;
+import java.awt.event.*;
 
 public class GameServer{
     
@@ -18,6 +20,8 @@ public class GameServer{
     private WriteToClient p2writeRunnable;
 
     private double p1x, p1y, p2x, p2y, p1a, p2a;
+
+    private long dashTimer = 0;
 
     public GameServer(){
         p1x = 150;
@@ -71,6 +75,7 @@ public class GameServer{
                     Thread writeThread2 = new Thread(p2writeRunnable);
                     writeThread1.start();
                     writeThread2.start();
+
                 }
             }
             System.out.println("Lobby is full");
@@ -145,10 +150,13 @@ public class GameServer{
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
-                        dataOut.flush();
                     }
+                    // dashTimer++;
+                    // System.out.println(dashTimer);
+                    // if (dashTimer%200 == 0){dataOut.writeBoolean(true);}
+                    // else dataOut.writeBoolean(false);
                     try{
-                        Thread.sleep(25);
+                        Thread.sleep(50);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException from wtc run");
                     }
