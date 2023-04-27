@@ -35,8 +35,8 @@ public class GameCanvas extends JComponent{
     }
 
     public void setUpBG( Graphics2D g2d, AffineTransform af){
-        // g2d.setPaint(Color.decode("#292B29"));
-        g2d.setPaint(color);
+        g2d.setPaint(Color.decode("#292B29"));
+        // g2d.setPaint(color);
         g2d.fillRect(0, 0, width, height);
         g2d.setTransform(af);
     }
@@ -60,8 +60,8 @@ public class GameCanvas extends JComponent{
         AffineTransform af = g2d.getTransform();
         
         setUpBG(g2d, af);
-        you.draw(g2d, af);
         enemy.draw(g2d, af);
+        you.draw(g2d, af);
         
         enemyExists = true;
 

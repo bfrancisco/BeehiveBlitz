@@ -19,6 +19,7 @@ public class GameServer{
     private WriteToClient p1writeRunnable;
     private WriteToClient p2writeRunnable;
 
+    // player coordinates and angle
     private double p1x, p1y, p2x, p2y, p1a, p2a;
 
     private long dashTimer = 0;

@@ -57,7 +57,6 @@ public class Ball extends ObjectProperties {
         // System.out.println(angle);
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
-
         if (angle > RAD90*4) angle -= RAD90*4;
         if (angle < 0) angle += RAD90*4;
     }
