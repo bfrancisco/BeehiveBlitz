@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.geom.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.*;
 import java.io.*;
 import java.net.*;
 
@@ -10,23 +10,20 @@ public class GameCanvas extends JComponent{
     private static final String P1SPRITE = "assets/player1.png";
     private static final String P2SPRITE = "assets/player2.png";
 
-    private Color color = Color.BLACK;
-
     private int width, height;
     private Ball you;
     private Ball enemy;
-
     private boolean enemyExists = false;
 
     private int playerID;
-
     private Socket socket;
-
     private ReadFromServer rfsRunnable;
     private WriteToServer wtsRunnable;
-    // private Timer movementTimer;
-    // private double rad;
-    // private int baseSpeed = 10;
+    
+    // for Double-Buffering, in reference of Killer Game Programming in Java by Andrew Davidson
+    private Graphics dbg;
+    private Image dbImage = null;
+
 
     public GameCanvas(int w, int h){
         width = w;
@@ -51,41 +48,61 @@ public class GameCanvas extends JComponent{
             you = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, P2SPRITE);
         }
     }
+    
+    private void gameRender(){
+        // mostly from Killer Game Programming in Java by Andrew Davidson
 
-    @Override
-    protected void paintComponent(Graphics g){
-        Graphics2D g2d = (Graphics2D)g;
+        dbImage = createImage(width, height);
+        if (dbImage == null){
+            System.out.println("dbImage is null");
+            return;
+        }
+        else{
+            dbg = dbImage.getGraphics();
+        }
+        
+        Graphics2D g2d = (Graphics2D)dbg;
         RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
         AffineTransform af = g2d.getTransform();
-        
+        // clear bg
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, width, height);
+
+        // draw game elements
         setUpBG(g2d, af);
         enemy.draw(g2d, af);
         you.draw(g2d, af);
-        
+
         enemyExists = true;
+        
+    }
 
-        double prevX = enemy.getX();
-        double prevA = enemy.getAngle();
-
-        // check if data is transferred
-        if (enemy.getX() != prevX && enemy.getAngle() != prevA){
-            System.out.println(enemy.getX());
-            System.out.println(enemy.getY());
-            System.out.println(enemy.getAngle());
+    private void paintScreen(){
+        Graphics2D g2d;
+        try{
+            g2d = (Graphics2D) this.getGraphics();
+            if ((g2d != null) && (dbImage != null)){
+                g2d.drawImage(dbImage, 0, 0, null);
+            }
+            Toolkit.getDefaultToolkit().sync();
+            g2d.dispose();
+        }
+        catch (Exception e){
+            System.out.println("Graphics context error: " + e);
         }
     }
 
-    public void SetUpMovement(){
-        Timer movementTimer = new Timer(20, new ActionListener(){
+    public void SetUpGameUpdate(){
+        // https://stackoverflow.com/questions/25025715/javax-swing-timer-vs-java-util-timer-inside-of-a-swing-application
+        new java.util.Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
+            public void run() {
                 you.moveAngle();
                 you.move();
-                repaint();
-            }
-        });
-        movementTimer.start();
+                gameRender();
+                paintScreen();
+            }}, 0, 30);
     }
 
     public void connectToServer(){
@@ -119,10 +136,10 @@ public class GameCanvas extends JComponent{
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
-                    System.out.println("Data received");
+                    // System.out.println("Data received");
                     // boolean dashBool = dataIn.readBoolean();
-                    if (color == Color.BLACK) color = Color.RED;
-                    else if (color == Color.RED) color = Color.BLACK;
+                    // if (color == Color.BLACK) color = Color.RED;
+                    // else if (color == Color.RED) color = Color.BLACK;
                     // if (dashBool && enemyExists){
                         
                     //     System.out.println("Should dash now");
@@ -184,7 +201,7 @@ public class GameCanvas extends JComponent{
                         dataOut.flush();
                     }
                     try{
-                        Thread.sleep(25);
+                        Thread.sleep(30);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException fr wts run");
                     }

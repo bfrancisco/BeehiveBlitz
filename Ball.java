@@ -29,14 +29,8 @@ public class Ball extends ObjectProperties {
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
         g2d.rotate(angle, posX, posY);
-        // g2d.setPaint(fill);
-        // g2d.fill(ball);
-        // g2d.setPaint(outlineFill);
-        // g2d.setStroke(outlineWidth);
-        // g2d.draw(ball);
-        // g2d.setTransform(reset);
-
-        g2d.drawImage(sprite, (int)posX - sprite.getWidth(null)/2, (int)posY - sprite.getHeight(null)/2, null);
+        g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
+        g2d.drawImage(sprite, 0, 0, null);
         g2d.setTransform(reset);
     }
 

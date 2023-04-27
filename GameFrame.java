@@ -21,7 +21,7 @@ public class GameFrame{
         gameFrame.add(gameCanvas);
         gameFrame.pack();
         gameCanvas.setUpSprites();
-        gameCanvas.SetUpMovement();
+        gameCanvas.SetUpGameUpdate();
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setVisible(true);      
     }
