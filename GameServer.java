@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-// import java.util.Timer;
 import javax.swing.Timer;
 import java.awt.event.*;
 
@@ -19,6 +18,7 @@ public class GameServer{
     private WriteToClient p1writeRunnable;
     private WriteToClient p2writeRunnable;
 
+    // player coordinates and angle
     private double p1x, p1y, p2x, p2y, p1a, p2a;
 
     private long dashTimer = 0;
@@ -137,7 +137,6 @@ public class GameServer{
                         // System.out.println(p2y);
                         // System.out.println(p2a);
                         
-                        
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
@@ -156,7 +155,7 @@ public class GameServer{
                     // if (dashTimer%200 == 0){dataOut.writeBoolean(true);}
                     // else dataOut.writeBoolean(false);
                     try{
-                        Thread.sleep(50);
+                        Thread.sleep(30);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException from wtc run");
                     }

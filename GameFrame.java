@@ -21,14 +21,13 @@ public class GameFrame{
         gameFrame.add(gameCanvas);
         gameFrame.pack();
         gameCanvas.setUpSprites();
-        gameCanvas.SetUpMovement();
+        gameCanvas.SetUpGameUpdate();
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setVisible(true);      
     }
 
     public void setKeyBindings(){
         JPanel cp = (JPanel) gameFrame.getContentPane();
-        // manually 
         cp.setFocusable(true);
 
         ActionMap am = cp.getActionMap();
