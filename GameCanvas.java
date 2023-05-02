@@ -15,6 +15,8 @@ public class GameCanvas extends JComponent{
     private Ball enemy;
     private boolean enemyExists = false;
 
+    private Color color = Color.BLACK;
+
     private int playerID;
     private Socket socket;
     private ReadFromServer rfsRunnable;
@@ -32,8 +34,8 @@ public class GameCanvas extends JComponent{
     }
 
     public void setUpBG( Graphics2D g2d, AffineTransform af){
-        g2d.setPaint(Color.decode("#292B29"));
-        // g2d.setPaint(color);
+        // g2d.setPaint(Color.decode("#292B29"));
+        g2d.setPaint(color);
         g2d.fillRect(0, 0, width, height);
         g2d.setTransform(af);
     }
@@ -137,19 +139,19 @@ public class GameCanvas extends JComponent{
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
                     // System.out.println("Data received");
-                    // boolean dashBool = dataIn.readBoolean();
-                    // if (color == Color.BLACK) color = Color.RED;
-                    // else if (color == Color.RED) color = Color.BLACK;
-                    // if (dashBool && enemyExists){
-                        
-                    //     System.out.println("Should dash now");
+                    int dashBool = dataIn.readInt();
+                    // System.out.println(dashBool);   
+                    if (dashBool%200 == 0 && enemyExists){
+                    if (color == Color.BLACK) color = Color.RED;
+                    else if (color == Color.RED) color = Color.BLACK;
+                        System.out.println("Should dash now");
                     //     // enemy.setX(enemy.getX()+Math.cos(enemy.getAngle())*100);
                     //     // enemy.setY(enemy.getY()+Math.sin(enemy.getAngle())*100);
                         
                     //     // you.setX(you.getX()+Math.cos(you.getAngle())*100);
                     //     // you.setY(you.getY()+Math.sin(you.getAngle())*100);
-                    // }
-                    if (enemyExists){
+                    }
+                    else if (enemyExists){
                         // System.out.println("Enemy is not null");
                         
                         // System.out.println(ex);

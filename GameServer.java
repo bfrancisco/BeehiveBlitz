@@ -21,13 +21,14 @@ public class GameServer{
     // player coordinates and angle
     private double p1x, p1y, p2x, p2y, p1a, p2a;
 
-    private long dashTimer = 0;
+    private int dashTimer;
 
     public GameServer(){
         p1x = 150;
         p1y = p2y = 200;
         p2x = 450;
         p1a = p2a = -1.570796327;
+        dashTimer = 0;
 
         System.out.println("server is running");
         numPlayers = 0;
@@ -79,8 +80,25 @@ public class GameServer{
                 }
             }
             System.out.println("Lobby is full");
+            TimerIncrement ti = new TimerIncrement();
+            Thread timerThread = new Thread(ti);
+            timerThread.start();
         }catch (IOException ex){
             System.out.println("IOException from acceptConnections");
+        }
+    }
+
+    private class TimerIncrement implements Runnable{
+        public void run(){
+            while (true){
+                dashTimer++;
+                if (dashTimer == 201){dashTimer = 1;}
+                try{
+                    Thread.sleep(30);
+                }catch (InterruptedException ex){
+                    System.out.println("timerincrement is not running");
+                }
+            }
         }
     }
 
@@ -150,10 +168,8 @@ public class GameServer{
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
                     }
-                    // dashTimer++;
+                    dataOut.writeInt(dashTimer);
                     // System.out.println(dashTimer);
-                    // if (dashTimer%200 == 0){dataOut.writeBoolean(true);}
-                    // else dataOut.writeBoolean(false);
                     try{
                         Thread.sleep(30);
                     }catch (InterruptedException ex){
