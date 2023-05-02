@@ -6,15 +6,18 @@ public class Ball extends ObjectProperties {
     private static final double RAD90 = 1.57; // 1.570796327
     private static final double ANGLESENS = 0.2;
 
-    private double speedX, speedY;
+    private int speedX, speedY;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
     private boolean toMove;
+    private int maxSpeed;
+    private int speedDecrement;
+    private int minSpeed;
 
     Toolkit t = Toolkit.getDefaultToolkit();
     private Image sprite;
 
-    public Ball(double x, double y, double w, double h, double sx, double sy, String spritefile){
+    public Ball(double x, double y, double w, double h, int sx, int sy, int sd, int ms, String spritefile){
         super(x, y, w, h);
         speedX = sx;
         speedY = sy;
@@ -22,6 +25,9 @@ public class Ball extends ObjectProperties {
         angleSensitivity = ANGLESENS;
         angleMovement = 0;
         toMove = false;
+        maxSpeed = ms;
+        speedDecrement = sd;
+        minSpeed = sx;
         sprite = t.getImage(spritefile);
     }
 
@@ -61,13 +67,25 @@ public class Ball extends ObjectProperties {
         else if (command.equals("move")) toMove = true;
     }
 
-    public boolean isMoving(){return toMove;}
+    public boolean isMoving(){return (speedX > 0 && speedY > 0);}
 
     public void move(){
-        if (toMove){
-            posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
-            posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
+        posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
+        posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
+        if (speedX > minSpeed){
+            speedX = Math.max(speedX - speedDecrement, minSpeed);
+            speedY = Math.max(speedY - speedDecrement, minSpeed);
+        }
+        
+    }
+
+    public void setMaxSpeed(){
+        if (speedX == minSpeed && speedY == minSpeed){
+            speedX = maxSpeed;
+            speedY = maxSpeed;
+            System.out.println(speedX);
         }
     }
+
     public void setAngle(double theta){angle = theta;}
 }

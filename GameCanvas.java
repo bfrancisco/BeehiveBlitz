@@ -15,7 +15,7 @@ public class GameCanvas extends JComponent{
     private Ball enemy;
     private boolean enemyExists = false;
 
-    private Color color = Color.BLACK;
+    // private Color color = Color.BLACK;
 
     private int playerID;
     private Socket socket;
@@ -34,20 +34,20 @@ public class GameCanvas extends JComponent{
     }
 
     public void setUpBG( Graphics2D g2d, AffineTransform af){
-        // g2d.setPaint(Color.decode("#292B29"));
-        g2d.setPaint(color);
+        g2d.setPaint(Color.decode("#292B29"));
+        // g2d.setPaint(color);
         g2d.fillRect(0, 0, width, height);
         g2d.setTransform(af);
     }
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, P1SPRITE);
-            enemy = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, P2SPRITE);
+            you = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            enemy = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
         else{
-            enemy = new Ball(width/2 - width/4, height/2, 100, 50, (double)5, (double)5, P1SPRITE);
-            you = new Ball(width/2 + width/4, height/2, 100, 50, (double)5, (double)5, P2SPRITE);
+            enemy = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            you = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
     }
     
@@ -141,25 +141,18 @@ public class GameCanvas extends JComponent{
                     // System.out.println("Data received");
                     int dashBool = dataIn.readInt();
                     // System.out.println(dashBool);   
-                    if (dashBool%200 == 0 && enemyExists){
-                    if (color == Color.BLACK) color = Color.RED;
-                    else if (color == Color.RED) color = Color.BLACK;
-                        System.out.println("Should dash now");
-                    //     // enemy.setX(enemy.getX()+Math.cos(enemy.getAngle())*100);
-                    //     // enemy.setY(enemy.getY()+Math.sin(enemy.getAngle())*100);
-                        
-                    //     // you.setX(you.getX()+Math.cos(you.getAngle())*100);
-                    //     // you.setY(you.getY()+Math.sin(you.getAngle())*100);
-                    }
-                    else if (enemyExists){
-                        // System.out.println("Enemy is not null");
-                        
-                        // System.out.println(ex);
-                        // System.out.println(ey);
-                        // System.out.println(eA);
+                    
+                    if (enemyExists){
                         enemy.setX(ex);
                         enemy.setY(ey);
                         enemy.setAngle(eA);
+                    }
+                    if (dashBool >= 195 && enemyExists){
+                        // if (color == Color.BLACK) color = Color.RED;
+                        // else if (color == Color.RED) color = Color.BLACK;
+                        you.setMaxSpeed();
+                        enemy.setMaxSpeed();
+                        // System.out.println("Should dash now : " + dashBool);
                     }
         
                 }
