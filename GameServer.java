@@ -22,6 +22,7 @@ public class GameServer{
     private double p1x, p1y, p2x, p2y, p1a, p2a;
 
     private int dashTimer;
+    private static final int DASHLIMIT = 200; 
 
     public GameServer(){
         p1x = 150;
@@ -92,9 +93,11 @@ public class GameServer{
         public void run(){
             while (true){
                 dashTimer++;
-                if (dashTimer == 201){dashTimer = 1;}
+                if (dashTimer == DASHLIMIT+1){
+                    dashTimer = 1;
+                }
                 try{
-                    Thread.sleep(30);
+                    Thread.sleep(10);
                 }catch (InterruptedException ex){
                     System.out.println("timerincrement is not running");
                 }
@@ -124,9 +127,6 @@ public class GameServer{
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
-                        // System.out.println(p2x);
-                        // System.out.println(p2y);
-                        // System.out.println(p2a);
                     }
                 }
             }catch (IOException ex){
@@ -149,26 +149,19 @@ public class GameServer{
         public void run(){
             try{
                 while(true){
-                    // System.out.println(playerID);
                     if(playerID == 1){
-                        // System.out.println(p2x);
-                        // System.out.println(p2y);
-                        // System.out.println(p2a);
-                        
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
-                        dataOut.flush();
+                        
                     }
                     else{
-                        // System.out.println(p1x);
-                        // System.out.println(p1y);
-                        // System.out.println(p1a);
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
                     }
                     dataOut.writeInt(dashTimer);
+                    dataOut.flush();
                     // System.out.println(dashTimer);
                     try{
                         Thread.sleep(30);

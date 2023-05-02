@@ -5,8 +5,9 @@ public class Ball extends ObjectProperties {
     // (posX, posY) is the center of the ball.
     private static final double RAD90 = 1.57; // 1.570796327
     private static final double ANGLESENS = 0.2;
+    private static final int MAXSPEED = 64; // should be power of 2
 
-    private double speedX, speedY;
+    private int speedX, speedY;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
     private boolean toMove;
@@ -14,7 +15,7 @@ public class Ball extends ObjectProperties {
     Toolkit t = Toolkit.getDefaultToolkit();
     private Image sprite;
 
-    public Ball(double x, double y, double w, double h, double sx, double sy, String spritefile){
+    public Ball(double x, double y, double w, double h, int sx, int sy, String spritefile){
         super(x, y, w, h);
         speedX = sx;
         speedY = sy;
@@ -61,13 +62,21 @@ public class Ball extends ObjectProperties {
         else if (command.equals("move")) toMove = true;
     }
 
-    public boolean isMoving(){return toMove;}
+    public boolean isMoving(){return (speedX > 0 && speedY > 0);}
 
     public void move(){
-        if (toMove){
-            posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
-            posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
+        posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
+        posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
+        speedX /= 2;
+        speedY /= 2;
+    }
+
+    public void setMaxSpeed(){
+        if (speedX == 0 && speedY == 0){
+            speedX = MAXSPEED;
+            speedY = MAXSPEED;
         }
     }
+
     public void setAngle(double theta){angle = theta;}
 }
