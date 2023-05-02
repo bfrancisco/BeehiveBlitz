@@ -42,12 +42,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Ball(width/2 - width/4, height/2, 100, 50, 0, 0, P1SPRITE);
-            enemy = new Ball(width/2 + width/4, height/2, 100, 50, 0, 0, P2SPRITE);
+            you = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            enemy = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
         else{
-            enemy = new Ball(width/2 - width/4, height/2, 100, 50, 0, 0, P1SPRITE);
-            you = new Ball(width/2 + width/4, height/2, 100, 50, 0, 0, P2SPRITE);
+            enemy = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            you = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
     }
     
