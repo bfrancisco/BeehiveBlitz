@@ -54,20 +54,24 @@ public class GameCanvas extends JComponent{
     private void gameRender(){
         // mostly from Killer Game Programming in Java by Andrew Davidson
 
+        // create empty image. this will be the image to be PAINTED at the end
         dbImage = createImage(width, height);
         if (dbImage == null){
             System.out.println("dbImage is null");
             return;
         }
         else{
-            dbg = dbImage.getGraphics();
+            // get address of Graphics instance of dbg, so that dbImage will be painted by operating on its Graphics instance
+            dbg = dbImage.getGraphics(); 
         }
         
+        // convert dbg to Graphics2D to apply antialiasing
         Graphics2D g2d = (Graphics2D)dbg;
         RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
         AffineTransform af = g2d.getTransform();
-        // clear bg
+
+        // clear background
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, width, height);
 
@@ -76,6 +80,7 @@ public class GameCanvas extends JComponent{
         enemy.draw(g2d, af);
         you.draw(g2d, af);
 
+        // idk ivan ikaw magtanggal at magdebug pag tinanggal mo na to
         enemyExists = true;
         
     }
@@ -83,12 +88,12 @@ public class GameCanvas extends JComponent{
     private void paintScreen(){
         Graphics2D g2d;
         try{
-            g2d = (Graphics2D) this.getGraphics();
+            g2d = (Graphics2D) this.getGraphics(); // get Graphics of JComponent so that if we draw, it will show up on the GUI
             if ((g2d != null) && (dbImage != null)){
                 g2d.drawImage(dbImage, 0, 0, null);
             }
-            Toolkit.getDefaultToolkit().sync();
-            g2d.dispose();
+            Toolkit.getDefaultToolkit().sync(); // spaghetti, something related to compatibility across all platforms
+            g2d.dispose(); // spaghetti
         }
         catch (Exception e){
             System.out.println("Graphics context error: " + e);
