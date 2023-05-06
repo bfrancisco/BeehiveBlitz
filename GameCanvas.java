@@ -62,7 +62,7 @@ public class GameCanvas extends JComponent{
         }
         else{
             // get address of Graphics instance of dbg, so that dbImage will be painted by operating on its Graphics instance
-            dbg = dbImage.getGraphics(); 
+            dbg = dbImage.getGraphics();
         }
         
         // convert dbg to Graphics2D to apply antialiasing
@@ -107,9 +107,29 @@ public class GameCanvas extends JComponent{
             public void run() {
                 you.moveAngle();
                 you.move();
+                handleBorderCollision();
                 gameRender();
                 paintScreen();
             }}, 0, 30);
+    }
+
+    public void handleBorderCollision(){
+        if (you.getX() < 0){
+            you.setAngleToIncidence(false);
+            you.setX(0);
+        }
+        if (you.getY() < 0){
+            you.setAngleToIncidence(true);
+            you.setY(0);
+        }
+        if (you.getX() > width){
+            you.setAngleToIncidence(false);
+            you.setX(width);
+        }
+        if (you.getY() > height){
+            you.setAngleToIncidence(true);
+            you.setY(height);
+        }
     }
 
     public void connectToServer(){
@@ -157,6 +177,7 @@ public class GameCanvas extends JComponent{
                         // else if (color == Color.RED) color = Color.BLACK;
                         you.setMaxSpeed();
                         enemy.setMaxSpeed();
+                        System.out.println(Math.round(Math.toDegrees(you.getAngle())));
                         // System.out.println("Should dash now : " + dashBool);
                     }
         

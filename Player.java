@@ -88,4 +88,14 @@ public class Player extends ObjectProperties {
     }
 
     public void setAngle(double theta){angle = theta;}
+
+    public void setAngleToIncidence(boolean vertical){
+        if (vertical){
+            angle = (-angle)+4*RAD90;
+        }
+        else{
+            angle = (-angle)+2*RAD90;
+        }
+    }
+
 }
