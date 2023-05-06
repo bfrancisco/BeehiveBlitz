@@ -11,8 +11,8 @@ public class GameCanvas extends JComponent{
     private static final String P2SPRITE = "assets/player2.png";
 
     private int width, height;
-    private Ball you;
-    private Ball enemy;
+    private Player you;
+    private Player enemy;
     private boolean enemyExists = false;
 
     // private Color color = Color.BLACK;
@@ -42,12 +42,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            enemy = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
         }
         else{
-            enemy = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            you = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
         }
     }
     
@@ -62,7 +62,7 @@ public class GameCanvas extends JComponent{
         }
         else{
             // get address of Graphics instance of dbg, so that dbImage will be painted by operating on its Graphics instance
-            dbg = dbImage.getGraphics(); 
+            dbg = dbImage.getGraphics();
         }
         
         // convert dbg to Graphics2D to apply antialiasing
@@ -107,9 +107,29 @@ public class GameCanvas extends JComponent{
             public void run() {
                 you.moveAngle();
                 you.move();
+                handleBorderCollision();
                 gameRender();
                 paintScreen();
             }}, 0, 30);
+    }
+
+    public void handleBorderCollision(){
+        if (you.getX() < 0){
+            you.setAngleToIncidence(false);
+            you.setX(0);
+        }
+        else if (you.getY() < 0){
+            you.setAngleToIncidence(true);
+            you.setY(0);
+        }
+        else if (you.getX() > width){
+            you.setAngleToIncidence(false);
+            you.setX(width);
+        }
+        else if (you.getY() > height){
+            you.setAngleToIncidence(true);
+            you.setY(height);
+        }
     }
 
     public void connectToServer(){
@@ -157,6 +177,7 @@ public class GameCanvas extends JComponent{
                         // else if (color == Color.RED) color = Color.BLACK;
                         you.setMaxSpeed();
                         enemy.setMaxSpeed();
+                        // System.out.println(Math.round(Math.toDegrees(you.getAngle())));
                         // System.out.println("Should dash now : " + dashBool);
                     }
         
@@ -213,6 +234,6 @@ public class GameCanvas extends JComponent{
     }
 
     // get methods
-    public Ball getBall(){return you;}
+    public Player getPlayer(){return you;}
     public int getPlayerID(){return playerID;}
 }

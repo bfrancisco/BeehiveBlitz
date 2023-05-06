@@ -65,14 +65,14 @@ public class GameFrame{
         public void actionPerformed(ActionEvent ae) {
             
             if (command.equals("print")){
-                System.out.print(gameCanvas.getBall().getX());
-                System.out.print(" " +  gameCanvas.getBall().getY() + " " + gameCanvas.getBall().isMoving() + " " + gameCanvas.getBall().getAngle() + "\n");
+                System.out.print(gameCanvas.getPlayer().getX());
+                System.out.print(" " +  gameCanvas.getPlayer().getY() + " " + gameCanvas.getPlayer().isMoving() + " " + gameCanvas.getPlayer().getAngle() + "\n");
             }
             else if (!command.equals("move") && !command.equals("stopMove")){
-                gameCanvas.getBall().setAngleMovement(command);
+                gameCanvas.getPlayer().setAngleMovement(command);
             }
             else{
-                gameCanvas.getBall().setMovement(command);
+                gameCanvas.getPlayer().setMovement(command);
             }
         }
     }
