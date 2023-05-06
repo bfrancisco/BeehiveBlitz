@@ -11,8 +11,8 @@ public class GameCanvas extends JComponent{
     private static final String P2SPRITE = "assets/player2.png";
 
     private int width, height;
-    private Ball you;
-    private Ball enemy;
+    private Player you;
+    private Player enemy;
     private boolean enemyExists = false;
 
     // private Color color = Color.BLACK;
@@ -42,12 +42,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            enemy = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
         else{
-            enemy = new Ball(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            you = new Ball(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
         }
     }
     
@@ -213,6 +213,6 @@ public class GameCanvas extends JComponent{
     }
 
     // get methods
-    public Ball getBall(){return you;}
+    public Player getPlayer(){return you;}
     public int getPlayerID(){return playerID;}
 }

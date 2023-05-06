@@ -1,8 +1,8 @@
 import java.awt.*;
 import java.awt.geom.*;
 
-public class Ball extends ObjectProperties {
-    // (posX, posY) is the center of the ball.
+public class Player extends ObjectProperties {
+    // (posX, posY) is the center of the player.
     private static final double RAD90 = 1.57; // 1.570796327
     private static final double ANGLESENS = 0.2;
 
@@ -17,7 +17,7 @@ public class Ball extends ObjectProperties {
     Toolkit t = Toolkit.getDefaultToolkit();
     private Image sprite;
 
-    public Ball(double x, double y, double w, double h, int sx, int sy, int sd, int ms, String spritefile){
+    public Player(double x, double y, double w, double h, int sx, int sy, int sd, int ms, String spritefile){
         super(x, y, w, h);
         speedX = sx;
         speedY = sy;
