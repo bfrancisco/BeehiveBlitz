@@ -83,7 +83,6 @@ public class Player extends ObjectProperties {
         if (speedX == minSpeed && speedY == minSpeed){
             speedX = maxSpeed;
             speedY = maxSpeed;
-            System.out.println(speedX);
         }
     }
 

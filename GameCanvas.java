@@ -42,12 +42,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, 2, 2, 8, 64, P1SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, 2, 2, 8, 64, P2SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
         }
     }
     
@@ -118,15 +118,15 @@ public class GameCanvas extends JComponent{
             you.setAngleToIncidence(false);
             you.setX(0);
         }
-        if (you.getY() < 0){
+        else if (you.getY() < 0){
             you.setAngleToIncidence(true);
             you.setY(0);
         }
-        if (you.getX() > width){
+        else if (you.getX() > width){
             you.setAngleToIncidence(false);
             you.setX(width);
         }
-        if (you.getY() > height){
+        else if (you.getY() > height){
             you.setAngleToIncidence(true);
             you.setY(height);
         }
@@ -177,7 +177,7 @@ public class GameCanvas extends JComponent{
                         // else if (color == Color.RED) color = Color.BLACK;
                         you.setMaxSpeed();
                         enemy.setMaxSpeed();
-                        System.out.println(Math.round(Math.toDegrees(you.getAngle())));
+                        // System.out.println(Math.round(Math.toDegrees(you.getAngle())));
                         // System.out.println("Should dash now : " + dashBool);
                     }
         
