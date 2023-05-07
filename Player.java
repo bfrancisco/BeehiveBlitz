@@ -10,14 +10,15 @@ public class Player extends ObjectProperties {
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
     private boolean toMove;
-    private int maxSpeed;
-    private int speedDecrement;
     private int minSpeed;
+    private int maxSpeed;
+    private int speedIncrement;
+    private boolean isSpeedingUp;
 
     Toolkit t = Toolkit.getDefaultToolkit();
     private Image sprite;
 
-    public Player(double x, double y, double w, double h, int sx, int sy, int sd, int ms, String spritefile){
+    public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile){
         super(x, y, w, h);
         speedX = sx;
         speedY = sy;
@@ -25,9 +26,10 @@ public class Player extends ObjectProperties {
         angleSensitivity = ANGLESENS;
         angleMovement = 0;
         toMove = false;
-        maxSpeed = ms;
-        speedDecrement = sd;
         minSpeed = sx;
+        maxSpeed = ms;
+        speedIncrement = si;
+        isSpeedingUp = false;
         sprite = t.getImage(spritefile);
     }
 
@@ -72,19 +74,26 @@ public class Player extends ObjectProperties {
     public void move(){
         posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
         posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
-        if (speedX > minSpeed){
-            speedX = Math.max(speedX - speedDecrement, minSpeed);
-            speedY = Math.max(speedY - speedDecrement, minSpeed);
+        if (!isSpeedingUp){
+            if (speedX > minSpeed){
+                speedX = Math.max(speedX - speedIncrement, minSpeed);
+                speedY = Math.max(speedY - speedIncrement, minSpeed);
+            }
         }
+        else{
+            if (speedX < maxSpeed){
+                speedX = Math.max(speedX + speedIncrement, maxSpeed);
+                speedY = Math.max(speedY + speedIncrement, maxSpeed);
+            }
+            if (speedX >= maxSpeed){
+                isSpeedingUp = false;
+            }
+        }
+        
         
     }
 
-    public void setMaxSpeed(){
-        if (speedX == minSpeed && speedY == minSpeed){
-            speedX = maxSpeed;
-            speedY = maxSpeed;
-        }
-    }
+    public void toggleDash(){isSpeedingUp = true;}
 
     public void setAngle(double theta){angle = theta;}
 

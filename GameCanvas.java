@@ -9,6 +9,9 @@ import java.net.*;
 public class GameCanvas extends JComponent{
     private static final String P1SPRITE = "assets/player1.png";
     private static final String P2SPRITE = "assets/player2.png";
+    private static final int NORMALSPEED = 4;
+    private static final int MAXSPEED = 30;
+    private static final int SPEEDINCREMENT = 1;
 
     private int width, height;
     private Player you;
@@ -42,12 +45,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
         }
     }
     
@@ -175,8 +178,8 @@ public class GameCanvas extends JComponent{
                     if (dashBool >= 195 && enemyExists){
                         // if (color == Color.BLACK) color = Color.RED;
                         // else if (color == Color.RED) color = Color.BLACK;
-                        you.setMaxSpeed();
-                        enemy.setMaxSpeed();
+                        you.toggleDash();
+                        enemy.toggleDash();
                         // System.out.println(Math.round(Math.toDegrees(you.getAngle())));
                         // System.out.println("Should dash now : " + dashBool);
                     }
