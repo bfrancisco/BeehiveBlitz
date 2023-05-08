@@ -6,9 +6,6 @@ import javax.imageio.ImageIO;
 
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
-    private static final double RAD90 = 1.57; // 1.570796327
-    private static final double ANGLESENS = 0.2;
-    private static final double NEEDLEDIST = 26;
 
     private BufferedImage sprite;
     private int speedX, speedY;
@@ -20,7 +17,7 @@ public class Player extends ObjectProperties {
     private int speedIncrement;
     private boolean isSpeedingUp;
 
-    private double needleX, needleY;
+    public double needleX, needleY;
 
     public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile){
         super(x, y);
@@ -34,8 +31,8 @@ public class Player extends ObjectProperties {
         setHeight(sprite.getHeight());
         speedX = sx;
         speedY = sy;
-        angle = RAD90;
-        angleSensitivity = ANGLESENS;
+        angle = Constants.RAD90;
+        angleSensitivity = Constants.ANGLESENS;
         angleMovement = 0;
         toMove = false;
         minSpeed = sx;
@@ -48,7 +45,8 @@ public class Player extends ObjectProperties {
 
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
-        g2d.fillOval((int)needleX-5, (int)needleY-5, 10, 10);
+        // g2d.fillOval((int)(needleX-Constants.BODYRADIUS), (int)(needleY-Constants.BODYRADIUS), (int)Constants.BODYRADIUS*2, (int)Constants.BODYRADIUS*2);
+        
         g2d.rotate(angle, posX, posY);
         g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
         g2d.drawImage(sprite, 0, 0, null);
@@ -76,17 +74,17 @@ public class Player extends ObjectProperties {
         // System.out.println(angle);
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
-        if (angle > RAD90*4) angle -= RAD90*4;
-        if (angle < 0) angle += RAD90*4;
+        if (angle > Constants.RAD90*4) angle -= Constants.RAD90*4;
+        if (angle < 0) angle += Constants.RAD90*4;
     }
     public double getAngle(){return angle;}
     
-    public void setMovement(String command){
-        if (command.equals("stopMove")) toMove = false;
-        else if (command.equals("move")) toMove = true;
-    }
+    // public void setMovement(String command){
+    //     if (command.equals("stopMove")) toMove = false;
+    //     else if (command.equals("move")) toMove = true;
+    // }
 
-    public boolean isMoving(){return (speedX > 0 && speedY > 0);}
+    public boolean isDashing(){return (speedX != minSpeed && speedY != minSpeed);}
 
     public void move(){
         posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
@@ -94,18 +92,22 @@ public class Player extends ObjectProperties {
         setNeedlePoint();
 
         if (!isSpeedingUp){
-            if (speedX > minSpeed){
-                speedX = Math.max(speedX - speedIncrement, minSpeed);
-                speedY = Math.max(speedY - speedIncrement, minSpeed);
+            if (speedX < minSpeed){
+                speedX += speedIncrement;
+                speedY += speedIncrement;
+            }
+            if (speedX >= minSpeed){
+                speedX = minSpeed;
+                speedY = minSpeed;
             }
         }
         else{
-            if (speedX < maxSpeed){
-                speedX = Math.min(speedX + speedIncrement, maxSpeed);
-                speedY = Math.min(speedY + speedIncrement, maxSpeed);
+            if (speedX > -maxSpeed){
+                speedX = Math.max(speedX - speedIncrement, -maxSpeed);
+                speedY = Math.max(speedY - speedIncrement, -maxSpeed);
                 // System.out.println(speedX);
             }
-            if (speedX >= maxSpeed){
+            else if (speedX <= -maxSpeed){
                 isSpeedingUp = false;
                 // System.out.println("stop speeding up");
             }
@@ -118,15 +120,22 @@ public class Player extends ObjectProperties {
 
     public void setAngleToIncidence(boolean vertical){
         if (vertical){
-            angle = (-angle)+4*RAD90;
+            angle = (-angle)+4*Constants.RAD90;
         }
         else{
-            angle = (-angle)+2*RAD90;
+            angle = (-angle)+2*Constants.RAD90;
         }
     }
 
     public void setNeedlePoint(){
-        needleX = posX - Math.round(Math.cos(angle)*NEEDLEDIST * 100) / 100;
-        needleY = posY - Math.round(Math.sin(angle)*NEEDLEDIST * 100) / 100;
+        needleX = posX - Math.round(Math.cos(angle)*Constants.NEEDLEDIST * 100) / 100;
+        needleY = posY - Math.round(Math.sin(angle)*Constants.NEEDLEDIST * 100) / 100;
     }
+
+    public void bodyPunctured(){
+        speedX = minSpeed;
+        speedY = minSpeed;
+        isSpeedingUp = false;
+    }
+
 }

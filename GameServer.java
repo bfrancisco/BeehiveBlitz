@@ -18,11 +18,11 @@ public class GameServer{
     private WriteToClient p1writeRunnable;
     private WriteToClient p2writeRunnable;
 
-    // player coordinates and angle
-    private double p1x, p1y, p2x, p2y, p1a, p2a;
+    // player coordinates, angle, and needle coordinates
+    private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
 
     private int dashTimer;
-    private static final int DASHLIMIT = 200; 
+    private static final int DASHLIMIT = 200;
 
     public GameServer(){
         p1x = 150;
@@ -30,7 +30,7 @@ public class GameServer{
         p2x = 450;
         p1a = p2a = -1.570796327;
         dashTimer = 0;
-
+        
         System.out.println("server is running");
         numPlayers = 0;
         maxPlayers = 2;
@@ -93,7 +93,7 @@ public class GameServer{
         public void run(){
             while (true){
                 dashTimer++;
-                if (dashTimer == DASHLIMIT+1){
+                if (dashTimer == Constants.DASHLIMIT+1){
                     dashTimer = 1;
                 }
                 try{
@@ -123,11 +123,16 @@ public class GameServer{
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
+                        p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
+                        p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
                     }else{
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
+                        p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
+                        p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
                     }
+
                 }
             }catch (IOException ex){
                 System.out.println("IOException from RFC run()");
@@ -146,24 +151,47 @@ public class GameServer{
             System.out.println("WTC" + playerID + " Runnable created");
         }
         
+        public double getDistance(double x1, double y1, double x2, double y2){
+            return Math.round(( Math.sqrt( Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2) ) ) * 100) / 100;
+        }
+
         public void run(){
             try{
                 while(true){
+                    int p1Hitsp2, p2Hitsp1;
+                    p1Hitsp2 = p2Hitsp1 = 0;
                     if(playerID == 1){
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
+                        // if p1's needle hits p2's body
+                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                            p1Hitsp2 = -1;
+                        }
+                        else if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                            p1Hitsp2 = 1;
+                        }
+                        
+                        dataOut.writeInt(p1Hitsp2);
                     }
                     else{
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
+                        // if p2's needle hits p1's body
+                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                            p2Hitsp1 = -1;
+                        }
+                        else if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                            p2Hitsp1 = 1;
+                        }
+                        dataOut.writeInt(p2Hitsp1);
                     }
                     dataOut.writeInt(dashTimer);
                     dataOut.flush();
                     // System.out.println(dashTimer);
                     try{
-                        Thread.sleep(30);
+                        Thread.sleep(10);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException from wtc run");
                     }
