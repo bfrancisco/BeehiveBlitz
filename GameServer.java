@@ -77,13 +77,14 @@ public class GameServer{
                     Thread writeThread2 = new Thread(p2writeRunnable);
                     writeThread1.start();
                     writeThread2.start();
-
                 }
             }
             System.out.println("Lobby is full");
             TimerIncrement ti = new TimerIncrement();
             Thread timerThread = new Thread(ti);
             timerThread.start();
+            
+            InviFrame inviframe = new InviFrame();
         }catch (IOException ex){
             System.out.println("IOException from acceptConnections");
         }
@@ -137,6 +138,15 @@ public class GameServer{
             }catch (IOException ex){
                 System.out.println("IOException from RFC run()");
             }
+        }
+    }
+
+    private class InviFrame implements Runnable{
+        public void run(){
+            try{
+                Thread.sleep(2000);
+            }
+            catch (InterruptedException ex){System.out.println("Interrupted exception from dashdelay");}
         }
     }
 
