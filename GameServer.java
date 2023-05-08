@@ -153,7 +153,6 @@ public class GameServer{
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
-                        
                     }
                     else{
                         dataOut.writeDouble(p1x);

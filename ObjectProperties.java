@@ -7,6 +7,11 @@ public abstract class ObjectProperties {
     protected double width;
     protected double height;
 
+    public ObjectProperties(double x, double y){
+        posX = x;
+        posY = y;
+    }
+
     public ObjectProperties(double x, double y, double w, double h){
         posX = x;
         posY = y;
@@ -23,6 +28,8 @@ public abstract class ObjectProperties {
     //Setter Functions
     public void setX(double v){posX = v;}
     public void setY(double v){posY = v;}
+    public void setWidth(double w){width = w;}
+    public void setHeight(double h){height = h;}
 
     abstract void draw(Graphics2D g2d, AffineTransform reset);
 }

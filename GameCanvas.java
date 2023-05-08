@@ -5,14 +5,21 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class GameCanvas extends JComponent{
-    private static final String P1SPRITE = "assets/player1.png";
-    private static final String P2SPRITE = "assets/player2.png";
+    private static final String BGSPRITE = "assets/background.png";
+    private static final String P1SPRITE = "assets/player.png";
+    private static final String P2SPRITE = "assets/enemy.png";
+    private static final int NORMALSPEED = 3;
+    private static final int MAXSPEED = 30;
+    private static final int SPEEDINCREMENT = 1;
 
     private int width, height;
     private Player you;
     private Player enemy;
+    private BufferedImage bgImage;
     private boolean enemyExists = false;
 
     // private Color color = Color.BLACK;
@@ -34,20 +41,23 @@ public class GameCanvas extends JComponent{
     }
 
     public void setUpBG( Graphics2D g2d, AffineTransform af){
-        g2d.setPaint(Color.decode("#292B29"));
-        // g2d.setPaint(color);
-        g2d.fillRect(0, 0, width, height);
+        try{
+            bgImage = ImageIO.read(new File(BGSPRITE));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        g2d.drawImage(bgImage, 0, 0, null);
         g2d.setTransform(af);
     }
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, 4, 4, 8, 64, P1SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, 4, 4, 8, 64, P2SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
         }
     }
     
@@ -171,12 +181,13 @@ public class GameCanvas extends JComponent{
                         enemy.setX(ex);
                         enemy.setY(ey);
                         enemy.setAngle(eA);
+                        enemy.setNeedlePoint();
                     }
                     if (dashBool >= 195 && enemyExists){
                         // if (color == Color.BLACK) color = Color.RED;
                         // else if (color == Color.RED) color = Color.BLACK;
-                        you.setMaxSpeed();
-                        enemy.setMaxSpeed();
+                        you.toggleDash();
+                        enemy.toggleDash();
                         // System.out.println(Math.round(Math.toDegrees(you.getAngle())));
                         // System.out.println("Should dash now : " + dashBool);
                     }

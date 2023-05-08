@@ -1,42 +1,61 @@
 import java.awt.*;
 import java.awt.geom.*;
+import java.io.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
     private static final double RAD90 = 1.57; // 1.570796327
     private static final double ANGLESENS = 0.2;
+    private static final double NEEDLEDIST = 26;
 
+    private BufferedImage sprite;
     private int speedX, speedY;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
     private boolean toMove;
-    private int maxSpeed;
-    private int speedDecrement;
     private int minSpeed;
+    private int maxSpeed;
+    private int speedIncrement;
+    private boolean isSpeedingUp;
 
-    Toolkit t = Toolkit.getDefaultToolkit();
-    private Image sprite;
+    private double needleX, needleY;
 
-    public Player(double x, double y, double w, double h, int sx, int sy, int sd, int ms, String spritefile){
-        super(x, y, w, h);
+    public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile){
+        super(x, y);
+        try{
+            sprite = ImageIO.read(new File(spritefile));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        
+        setWidth(sprite.getWidth());
+        setHeight(sprite.getHeight());
         speedX = sx;
         speedY = sy;
         angle = RAD90;
         angleSensitivity = ANGLESENS;
         angleMovement = 0;
         toMove = false;
-        maxSpeed = ms;
-        speedDecrement = sd;
         minSpeed = sx;
-        sprite = t.getImage(spritefile);
+        maxSpeed = ms;
+        speedIncrement = si;
+        isSpeedingUp = false;
+        setNeedlePoint();
     }
 
 
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
+        g2d.fillOval((int)needleX-5, (int)needleY-5, 10, 10);
         g2d.rotate(angle, posX, posY);
         g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
         g2d.drawImage(sprite, 0, 0, null);
+        
+        g2d.setPaint(Color.white);
+        g2d.drawRect(0, 0, (int)width, (int)height);
+        
         g2d.setTransform(reset);
     }
 
@@ -72,19 +91,28 @@ public class Player extends ObjectProperties {
     public void move(){
         posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
         posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
-        if (speedX > minSpeed){
-            speedX = Math.max(speedX - speedDecrement, minSpeed);
-            speedY = Math.max(speedY - speedDecrement, minSpeed);
+        setNeedlePoint();
+
+        if (!isSpeedingUp){
+            if (speedX > minSpeed){
+                speedX = Math.max(speedX - speedIncrement, minSpeed);
+                speedY = Math.max(speedY - speedIncrement, minSpeed);
+            }
         }
-        
+        else{
+            if (speedX < maxSpeed){
+                speedX = Math.min(speedX + speedIncrement, maxSpeed);
+                speedY = Math.min(speedY + speedIncrement, maxSpeed);
+                // System.out.println(speedX);
+            }
+            if (speedX >= maxSpeed){
+                isSpeedingUp = false;
+                // System.out.println("stop speeding up");
+            }
+        }
     }
 
-    public void setMaxSpeed(){
-        if (speedX == minSpeed && speedY == minSpeed){
-            speedX = maxSpeed;
-            speedY = maxSpeed;
-        }
-    }
+    public void toggleDash(){isSpeedingUp = true;}
 
     public void setAngle(double theta){angle = theta;}
 
@@ -97,4 +125,8 @@ public class Player extends ObjectProperties {
         }
     }
 
+    public void setNeedlePoint(){
+        needleX = posX - Math.round(Math.cos(angle)*NEEDLEDIST * 100) / 100;
+        needleY = posY - Math.round(Math.sin(angle)*NEEDLEDIST * 100) / 100;
+    }
 }
