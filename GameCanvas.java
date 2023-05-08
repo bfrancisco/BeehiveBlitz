@@ -9,13 +9,6 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 public class GameCanvas extends JComponent{
-    private static final String BGSPRITE = "assets/background.png";
-    private static final String P1SPRITE = "assets/player.png";
-    private static final String P2SPRITE = "assets/enemy.png";
-    private static final int NORMALSPEED = 3;
-    private static final int MAXSPEED = 30;
-    private static final int SPEEDINCREMENT = 1;
-
     private int width, height;
     private Player you;
     private Player enemy;
@@ -42,7 +35,7 @@ public class GameCanvas extends JComponent{
 
     public void setUpBG( Graphics2D g2d, AffineTransform af){
         try{
-            bgImage = ImageIO.read(new File(BGSPRITE));
+            bgImage = ImageIO.read(new File(Constants.BGSPRITE));
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -52,12 +45,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P2SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, NORMALSPEED, NORMALSPEED, SPEEDINCREMENT, MAXSPEED, P1SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
+            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
         }
     }
     
@@ -90,7 +83,6 @@ public class GameCanvas extends JComponent{
         enemy.draw(g2d, af);
         you.draw(g2d, af);
 
-        // idk ivan ikaw magtanggal at magdebug pag tinanggal mo na to
         enemyExists = true;
         
     }

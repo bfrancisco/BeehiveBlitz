@@ -6,9 +6,6 @@ import javax.imageio.ImageIO;
 
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
-    private static final double RAD90 = 1.57; // 1.570796327
-    private static final double ANGLESENS = 0.2;
-    private static final double NEEDLEDIST = 26;
 
     private BufferedImage sprite;
     private int speedX, speedY;
@@ -34,8 +31,8 @@ public class Player extends ObjectProperties {
         setHeight(sprite.getHeight());
         speedX = sx;
         speedY = sy;
-        angle = RAD90;
-        angleSensitivity = ANGLESENS;
+        angle = Constants.RAD90;
+        angleSensitivity = Constants.ANGLESENS;
         angleMovement = 0;
         toMove = false;
         minSpeed = sx;
@@ -76,8 +73,8 @@ public class Player extends ObjectProperties {
         // System.out.println(angle);
         if (angleMovement == 1) angle -= angleSensitivity;
         else if (angleMovement == 2) angle += angleSensitivity;
-        if (angle > RAD90*4) angle -= RAD90*4;
-        if (angle < 0) angle += RAD90*4;
+        if (angle > Constants.RAD90*4) angle -= Constants.RAD90*4;
+        if (angle < 0) angle += Constants.RAD90*4;
     }
     public double getAngle(){return angle;}
     
@@ -118,15 +115,15 @@ public class Player extends ObjectProperties {
 
     public void setAngleToIncidence(boolean vertical){
         if (vertical){
-            angle = (-angle)+4*RAD90;
+            angle = (-angle)+4*Constants.RAD90;
         }
         else{
-            angle = (-angle)+2*RAD90;
+            angle = (-angle)+2*Constants.RAD90;
         }
     }
 
     public void setNeedlePoint(){
-        needleX = posX - Math.round(Math.cos(angle)*NEEDLEDIST * 100) / 100;
-        needleY = posY - Math.round(Math.sin(angle)*NEEDLEDIST * 100) / 100;
+        needleX = posX - Math.round(Math.cos(angle)*Constants.NEEDLEDIST * 100) / 100;
+        needleY = posY - Math.round(Math.sin(angle)*Constants.NEEDLEDIST * 100) / 100;
     }
 }
