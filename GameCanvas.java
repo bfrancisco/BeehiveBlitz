@@ -82,7 +82,7 @@ public class GameCanvas extends JComponent{
         setUpBG(g2d, af);
         enemy.draw(g2d, af);
         you.draw(g2d, af);
-
+        
         enemyExists = true;
         
     }
@@ -165,7 +165,7 @@ public class GameCanvas extends JComponent{
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
-                    // System.out.println("Data received");
+                    int isCollide = dataIn.readInt();
                     int dashBool = dataIn.readInt();
                     // System.out.println(dashBool);   
                     
@@ -174,8 +174,16 @@ public class GameCanvas extends JComponent{
                         enemy.setY(ey);
                         enemy.setAngle(eA);
                         enemy.setNeedlePoint();
+                        if (isCollide == -1){
+                            you.bodyPunctured();
+                            System.out.println(playerID + ": Punctured");
+                        }
+                        else if (isCollide == 1){
+                            // score ++
+                            enemy.bodyPunctured();
+                        }
                     }
-                    if (dashBool >= 195 && enemyExists){
+                    if (dashBool >= Constants.DASHLIMIT - 5 && enemyExists){
                         // if (color == Color.BLACK) color = Color.RED;
                         // else if (color == Color.RED) color = Color.BLACK;
                         you.toggleDash();
