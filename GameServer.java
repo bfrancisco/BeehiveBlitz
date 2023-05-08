@@ -24,12 +24,20 @@ public class GameServer{
     private int dashTimer;
     private static final int DASHLIMIT = 200;
 
+    private InviFrame inviframe;
+    private Thread iFrameThread;
+    
+    private boolean flag = false;
+
     public GameServer(){
         p1x = 150;
         p1y = p2y = 200;
         p2x = 450;
         p1a = p2a = -1.570796327;
         dashTimer = 0;
+        
+        inviframe = new InviFrame();
+        iFrameThread = new Thread(inviframe);
         
         System.out.println("server is running");
         numPlayers = 0;
@@ -83,8 +91,7 @@ public class GameServer{
             TimerIncrement ti = new TimerIncrement();
             Thread timerThread = new Thread(ti);
             timerThread.start();
-            
-            InviFrame inviframe = new InviFrame();
+            iFrameThread.start();
         }catch (IOException ex){
             System.out.println("IOException from acceptConnections");
         }
@@ -143,10 +150,18 @@ public class GameServer{
 
     private class InviFrame implements Runnable{
         public void run(){
-            try{
-                Thread.sleep(2000);
+            while (true){   
+                System.out.println("running");
+                System.out.println(flag);
+                if (flag){
+                    try{
+                        Thread.sleep(2000);
+                        System.out.println("sleeping");
+                        flag = false;
+                    }
+                    catch (InterruptedException ex){System.out.println("Interrupted exception from inviframe");}
+                }
             }
-            catch (InterruptedException ex){System.out.println("Interrupted exception from dashdelay");}
         }
     }
 
@@ -175,11 +190,17 @@ public class GameServer{
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
                         // if p1's needle hits p2's body
-                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                        // System.out.println(iFrameThread.getState() == Thread.State.RUNNABLE);
+                        // System.out.println(flag);
+                        if ( (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
                             p1Hitsp2 = -1;
+                            flag = true;
+                            System.out.println("hit");
                         }
-                        else if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                        else if ( (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
                             p1Hitsp2 = 1;
+                            flag = true;
+                            System.out.println("hit");
                         }
                         
                         dataOut.writeInt(p1Hitsp2);
@@ -189,11 +210,15 @@ public class GameServer{
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
                         // if p2's needle hits p1's body
-                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                        if ( (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
                             p2Hitsp1 = -1;
+                            flag = true;
+                            System.out.println("hit");
                         }
-                        else if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                        else if ( (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
                             p2Hitsp1 = 1;
+                            flag = true;
+                            System.out.println("hit");
                         }
                         dataOut.writeInt(p2Hitsp1);
                     }
