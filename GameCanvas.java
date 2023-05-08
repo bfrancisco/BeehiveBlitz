@@ -233,7 +233,7 @@ public class GameCanvas extends JComponent{
                         dataOut.flush();
                     }
                     try{
-                        Thread.sleep(30);
+                        Thread.sleep(10);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException fr wts run");
                     }

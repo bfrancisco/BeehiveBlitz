@@ -163,7 +163,7 @@ public class GameServer{
                     dataOut.flush();
                     // System.out.println(dashTimer);
                     try{
-                        Thread.sleep(30);
+                        Thread.sleep(10);
                     }catch (InterruptedException ex){
                         System.out.println("InterruptedException from wtc run");
                     }

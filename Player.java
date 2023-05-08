@@ -105,7 +105,7 @@ public class Player extends ObjectProperties {
                 speedY = Math.min(speedY + speedIncrement, maxSpeed);
                 // System.out.println(speedX);
             }
-            if (speedX >= maxSpeed){
+            else if (speedX >= maxSpeed){
                 isSpeedingUp = false;
                 // System.out.println("stop speeding up");
             }
