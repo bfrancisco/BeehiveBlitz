@@ -42,7 +42,6 @@ public class Player extends ObjectProperties {
         setNeedlePoint();
     }
 
-
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
         // g2d.fillOval((int)(needleX-Constants.BODYRADIUS), (int)(needleY-Constants.BODYRADIUS), (int)Constants.BODYRADIUS*2, (int)Constants.BODYRADIUS*2);
@@ -56,11 +55,6 @@ public class Player extends ObjectProperties {
         
         g2d.setTransform(reset);
     }
-
-    // Mutator Functions
-    public void invertXDirection(){speedX *= -1;}
-    public void invertYDirection(){speedY *= -1;}
-
     // For Controls
     public void setAngleMovement(String command){
         // System.out.println(command);
@@ -137,5 +131,4 @@ public class Player extends ObjectProperties {
         speedY = minSpeed;
         isSpeedingUp = false;
     }
-
 }

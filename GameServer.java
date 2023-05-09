@@ -20,14 +20,11 @@ public class GameServer{
 
     // player coordinates, angle, and needle coordinates
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
+    private int p1s, p2s;
 
     private int dashTimer;
     private static final int DASHLIMIT = 200;
 
-    private InviFrame inviframe;
-    private Thread iFrameThread;
-    
-    private boolean flag = false;
 
     public GameServer(){
         p1x = 150;
@@ -35,9 +32,6 @@ public class GameServer{
         p2x = 450;
         p1a = p2a = -1.570796327;
         dashTimer = 0;
-        
-        inviframe = new InviFrame();
-        iFrameThread = new Thread(inviframe);
         
         System.out.println("server is running");
         numPlayers = 0;
@@ -91,7 +85,7 @@ public class GameServer{
             TimerIncrement ti = new TimerIncrement();
             Thread timerThread = new Thread(ti);
             timerThread.start();
-            iFrameThread.start();
+            
         }catch (IOException ex){
             System.out.println("IOException from acceptConnections");
         }
@@ -131,12 +125,14 @@ public class GameServer{
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
+                        p2s = dataIn.readInt();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
                         p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
                     }else{
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
+                        p1s = dataIn.readInt();
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
                     }
@@ -144,23 +140,6 @@ public class GameServer{
                 }
             }catch (IOException ex){
                 System.out.println("IOException from RFC run()");
-            }
-        }
-    }
-
-    private class InviFrame implements Runnable{
-        public void run(){
-            while (true){   
-                System.out.println("running");
-                System.out.println(flag);
-                if (flag){
-                    try{
-                        Thread.sleep(2000);
-                        System.out.println("sleeping");
-                        flag = false;
-                    }
-                    catch (InterruptedException ex){System.out.println("Interrupted exception from inviframe");}
-                }
             }
         }
     }
@@ -184,44 +163,32 @@ public class GameServer{
             try{
                 while(true){
                     int p1Hitsp2, p2Hitsp1;
-                    p1Hitsp2 = p2Hitsp1 = 0;
+                    p1Hitsp2 = p2Hitsp1 = 0; // 1 = true, 0 = no collision, -1 opposite happens; xHitsy then -1 means that yHitsx = 1
+                    
                     if(playerID == 1){
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
-                        // if p1's needle hits p2's body
-                        // System.out.println(iFrameThread.getState() == Thread.State.RUNNABLE);
-                        // System.out.println(flag);
-                        if ( (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
-                            p1Hitsp2 = -1;
-                            flag = true;
-                            System.out.println("hit");
+                        dataOut.writeInt(p1s);
+
+                        // if p2's needle hits p1's body
+                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                            p2Hitsp1 = 1; p1Hitsp2 = -1;
                         }
-                        else if ( (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
-                            p1Hitsp2 = 1;
-                            flag = true;
-                            System.out.println("hit");
-                        }
-                        
-                        dataOut.writeInt(p1Hitsp2);
                     }
                     else{
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
-                        // if p2's needle hits p1's body
-                        if ( (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
-                            p2Hitsp1 = -1;
-                            flag = true;
-                            System.out.println("hit");
+                        dataOut.writeInt(p2s);
+
+                        // if p1's needle hits p2's body
+                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                            p1Hitsp2 = 1; p2Hitsp1 = -1;
                         }
-                        else if ( (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS) && (iFrameThread.getState() == Thread.State.RUNNABLE) && (flag == false)){
-                            p2Hitsp1 = 1;
-                            flag = true;
-                            System.out.println("hit");
-                        }
-                        dataOut.writeInt(p2Hitsp1);
                     }
+                    dataOut.writeInt(p1Hitsp2);
+                    dataOut.writeInt(p2Hitsp1);
                     dataOut.writeInt(dashTimer);
                     dataOut.flush();
                     // System.out.println(dashTimer);

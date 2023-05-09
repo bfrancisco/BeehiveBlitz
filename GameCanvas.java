@@ -14,8 +14,7 @@ public class GameCanvas extends JComponent{
     private Player enemy;
     private BufferedImage bgImage;
     private boolean enemyExists = false;
-
-    // private Color color = Color.BLACK;
+    private boolean isPlayerInvincible = false;
 
     private int playerID;
     private Socket socket;
@@ -26,6 +25,7 @@ public class GameCanvas extends JComponent{
     private Graphics dbg;
     private Image dbImage = null;
 
+    private int enemyScore = 0;
 
     public GameCanvas(int w, int h){
         width = w;
@@ -165,31 +165,42 @@ public class GameCanvas extends JComponent{
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
-                    int isCollide = dataIn.readInt();
-                    int dashBool = dataIn.readInt();
-                    // System.out.println(dashBool);   
+                    int youScore = dataIn.readInt();
+                    int isCollideP1P2 = dataIn.readInt();
+                    int isCollideP2P1 = dataIn.readInt();
+                    int dashBool = dataIn.readInt(); 
                     
                     if (enemyExists){
                         enemy.setX(ex);
                         enemy.setY(ey);
                         enemy.setAngle(eA);
                         enemy.setNeedlePoint();
-                        if (isCollide == -1){
+                        // player's score is always on left, enemy is on right
+                        System.out.println(youScore + " " + enemyScore);
+                        if ( (playerID == 1) && (isCollideP1P2 == -1) 
+                        && !(isPlayerInvincible) 
+                        ){ 
+                            // System.out.println("p2 hits p1");
+                            enemyScore++;
                             you.bodyPunctured();
-                            System.out.println(playerID + ": Punctured");
+                            isPlayerInvincible = true;
+                            startInvincibilityThread();
                         }
-                        else if (isCollide == 1){
-                            // score ++
-                            enemy.bodyPunctured();
+                        
+                        if ( (playerID == 2) && (isCollideP2P1 == -1) 
+                        && !(isPlayerInvincible) 
+                        ){
+                            // System.out.println("p1 hits p2");
+                            enemyScore++;
+                            you.bodyPunctured();
+                            isPlayerInvincible = true;
+                            startInvincibilityThread();
                         }
+                        
                     }
                     if (dashBool >= Constants.DASHLIMIT - 5 && enemyExists){
-                        // if (color == Color.BLACK) color = Color.RED;
-                        // else if (color == Color.RED) color = Color.BLACK;
                         you.toggleDash();
                         enemy.toggleDash();
-                        // System.out.println(Math.round(Math.toDegrees(you.getAngle())));
-                        // System.out.println("Should dash now : " + dashBool);
                     }
         
                 }
@@ -213,6 +224,24 @@ public class GameCanvas extends JComponent{
             }
         }
     }
+    public class InvincibilityThread implements Runnable{
+        private long invincibilityDuration = 2000;
+
+        public void run(){
+            try{
+                Thread.sleep(invincibilityDuration);
+            }catch (InterruptedException ex){
+                System.out.println("interrupetedexception from invithread");
+            }
+            isPlayerInvincible = false;
+        }
+    }
+
+    public void startInvincibilityThread() {
+        InvincibilityThread inviInstance = new InvincibilityThread();
+        Thread thread = new Thread(inviInstance);
+        thread.start();
+    }
 
     private class WriteToServer implements Runnable{
 
@@ -230,6 +259,7 @@ public class GameCanvas extends JComponent{
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
                         dataOut.writeDouble(you.getAngle());
+                        dataOut.writeInt(enemyScore);
                         dataOut.flush();
                     }
                     try{
