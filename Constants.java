@@ -23,4 +23,7 @@ public class Constants {
 
     public static final int INVIDURATION = 80;
     public static final float INVIALPHA = 0.5f;
+
+    public static final String FONTNAME = "Impact";
+    public static final int FONTSZ = 42;
 }

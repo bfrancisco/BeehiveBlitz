@@ -47,6 +47,7 @@ public class Player extends ObjectProperties {
         isInvincible = false;
         inviCounter = 0;
         animCounter = 0;
+        score = 0;
         setNeedlePoint();
         hitAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Constants.INVIALPHA);
         normalAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);

@@ -18,6 +18,8 @@ public class GameCanvas extends JComponent{
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
     private BufferedImage timeHexagonGlow;
+    private Font font, fontOffset;
+    private Color blue, orange;
 
     private int playerID;
     private Socket socket;
@@ -44,11 +46,14 @@ public class GameCanvas extends JComponent{
             enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
             you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
-        
+        font = new Font(Constants.FONTNAME, Font.PLAIN, Constants.FONTSZ);
+        orange = Color.decode("#F4A134");
+        blue = Color.decode("#52A4A8");
         try{
             bgImage = ImageIO.read(new File(Constants.BGSPRITE));
             timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
             timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
+            
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -57,8 +62,9 @@ public class GameCanvas extends JComponent{
 
     public void drawBG( Graphics2D g2d, AffineTransform af){
         g2d.drawImage(bgImage, 0, 0, null);
+        
+        // draw timer indicators
         int midX = width/2;
-        // System.out.println(dashTimer);
         for (int i = 100; i <= dashTimer; i += 100){
             if (dashTimer < 300){
                 g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
@@ -69,6 +75,25 @@ public class GameCanvas extends JComponent{
                 g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
             }
         }
+        
+        // draw score
+        String youScoreStr = Integer.toString(you.getScore());
+        String enemyScoreStr = Integer.toString(enemy.getScore());
+        FontMetrics metrics = g2d.getFontMetrics();
+        g2d.setFont(font);
+        if (playerID == 1){
+            g2d.setPaint(orange);
+            g2d.drawString(youScoreStr, midX - 295 - (metrics.stringWidth(youScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+            g2d.setPaint(blue);
+            g2d.drawString(enemyScoreStr, midX + 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+        }
+        else if (playerID == 2){
+            g2d.setPaint(orange);
+            g2d.drawString(enemyScoreStr, midX - 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+            g2d.setPaint(blue);
+            g2d.drawString(youScoreStr, midX + 295 - (metrics.stringWidth(youScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+        }
+        
         g2d.setTransform(af);
     }
 
