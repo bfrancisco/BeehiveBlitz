@@ -68,7 +68,6 @@ public class GameCanvas extends JComponent{
                 g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
                 g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
             }
-            
         }
         g2d.setTransform(af);
     }
@@ -121,6 +120,8 @@ public class GameCanvas extends JComponent{
         catch (Exception e){
             System.out.println("Graphics context error: " + e);
         }
+
+        // System.out.println(you.getScore() + " | " + enemy.getScore());
     }
 
     public void SetUpGameUpdate(){
@@ -187,7 +188,7 @@ public class GameCanvas extends JComponent{
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
                     int gotPunctured = dataIn.readInt();
-                    int puncturedEnemy = dataIn.readInt();
+                    int enemyPunctured = dataIn.readInt();
                     dashTimer = dataIn.readInt();
                     if (!enemyExists) continue;
 
@@ -198,9 +199,13 @@ public class GameCanvas extends JComponent{
                     
                     if (gotPunctured == 1 && !you.isInvincible()){
                         you.bodyPunctured();
+                        enemy.addScore(1);
+                        // System.out.println("gotpuncutred");
                     }
-                    if (puncturedEnemy == 1 && !enemy.isInvincible()){
+                    if (enemyPunctured == 1 && !enemy.isInvincible()){
                         enemy.bodyPunctured();
+                        you.addScore(1);
+                        // System.out.println("enemyPunctured");
                     }
                         
                     if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
@@ -230,25 +235,6 @@ public class GameCanvas extends JComponent{
         }
     }
 
-    // public class InvincibilityThread implements Runnable{
-    //     private long invincibilityDuration = Constants.INVIDURATION;
-
-    //     public void run(){
-    //         try{
-    //             Thread.sleep(invincibilityDuration);
-    //         }catch (InterruptedException ex){
-    //             System.out.println("interrupetedexception from invithread");
-    //         }
-    //         you.setInvincible(false);
-    //     }
-    // }
-
-    // public void startInvincibilityThread() {
-    //     InvincibilityThread inviInstance = new InvincibilityThread();
-    //     Thread thread = new Thread(inviInstance);
-    //     thread.start();
-    // }
-
     private class WriteToServer implements Runnable{
 
         private DataOutputStream dataOut;
@@ -265,6 +251,7 @@ public class GameCanvas extends JComponent{
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
                         dataOut.writeDouble(you.getAngle());
+                        dataOut.writeInt(you.getScore());
                         dataOut.flush();
                     }
                     try{

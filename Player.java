@@ -17,10 +17,12 @@ public class Player extends ObjectProperties {
     private int speedIncrement;
     private boolean isSpeedingUp;
     private boolean isInvincible;
-    private int inviCounter; // 2000
+    private int inviCounter; // 80
     private int animCounter; // 1000
     private double needleX, needleY;
     private AlphaComposite hitAlpha;
+    private AlphaComposite normalAlpha;
+    private int score;
 
     public Player(double x, double y, double w, double h, int s, int si, int ms, String spritefile, String spritefileflap){
         super(x, y);
@@ -47,6 +49,7 @@ public class Player extends ObjectProperties {
         animCounter = 0;
         setNeedlePoint();
         hitAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Constants.INVIALPHA);
+        normalAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
     }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
@@ -58,6 +61,9 @@ public class Player extends ObjectProperties {
 
         if (isInvincible && inviCounter % 10 < 5){
             g2d.setComposite(hitAlpha);
+        }
+        else{
+            g2d.setComposite(normalAlpha);
         }
         
         if (animCounter % 100 < 50){
@@ -71,8 +77,8 @@ public class Player extends ObjectProperties {
 
         if (inviCounter > 0)
             inviCounter -= 1;
-        else
-            isInvincible = false;
+        else if (inviCounter == 0)
+            resetInviCounter();
 
         animCounter = (animCounter + speed) % 1000;
         
@@ -148,7 +154,20 @@ public class Player extends ObjectProperties {
         inviCounter = Constants.INVIDURATION;
     }
 
+    public void resetInviCounter(){
+        inviCounter = 0;
+        isInvincible = false;
+    }
+
     public boolean isInvincible(){
         return isInvincible;
+    }
+
+    public void addScore(int v){
+        score += v;
+    }
+
+    public int getScore(){
+        return score;
     }
 }

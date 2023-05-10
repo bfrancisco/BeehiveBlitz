@@ -22,6 +22,7 @@ public class GameServer{
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
     private boolean isDashing;
     private int dashTimer;
+    private int p1s, p2s;
 
 
     public GameServer(){
@@ -37,7 +38,8 @@ public class GameServer{
         maxPlayers = 2;
         try{
             ss = new ServerSocket(51734);
-        }catch (IOException ex){
+        }
+        catch (IOException ex){
              System.out.println("IOException from GameServer Constructor");
         }
     }
@@ -95,6 +97,7 @@ public class GameServer{
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
+                    System.out.println(p1s + " | " + p2s);
                     dashTimer = 1;
                 }
                 try{
@@ -126,6 +129,7 @@ public class GameServer{
                         p1a = dataIn.readDouble();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
                         p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100; 
+                        p1s = dataIn.readInt();
                     }
                     else if (playerID == 2) {
                         p2x = dataIn.readDouble();
@@ -133,6 +137,7 @@ public class GameServer{
                         p2a = dataIn.readDouble();
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
+                        p2s = dataIn.readInt();
                     }
 
                 }
