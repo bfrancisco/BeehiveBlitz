@@ -20,10 +20,8 @@ public class GameServer{
 
     // player coordinates, angle, and needle coordinates
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
-    private int p1s, p2s;
-
+    // private int p1s, p2s;
     private int dashTimer;
-    private static final int DASHLIMIT = 200;
 
 
     public GameServer(){
@@ -125,14 +123,12 @@ public class GameServer{
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
-                        p2s = dataIn.readInt();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
                         p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
                     }else{
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
-                        p1s = dataIn.readInt();
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
                     }
@@ -163,32 +159,35 @@ public class GameServer{
             try{
                 while(true){
                     int p1Hitsp2, p2Hitsp1;
-                    p1Hitsp2 = p2Hitsp1 = 0; // 1 = true, 0 = no collision, -1 opposite happens; xHitsy then -1 means that yHitsx = 1
+                    p1Hitsp2 = p2Hitsp1 = 0;
                     
-                    if(playerID == 1){
+                    if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                        p2Hitsp1 = 1;
+                    }
+                    if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                        p1Hitsp2 = 1;
+                    }
+
+                    if (playerID == 1){
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
-                        dataOut.writeInt(p1s);
-
-                        // if p2's needle hits p1's body
-                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
-                            p2Hitsp1 = 1; p1Hitsp2 = -1;
-                        }
+                        // if i got punctured
+                        dataOut.writeInt(p2Hitsp1);
+                        // if i punctured the enemy
+                        dataOut.writeInt(p1Hitsp2);
+                        
                     }
-                    else{
+                    else if (playerID == 2){
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
-                        dataOut.writeInt(p2s);
+                        // if i got punctured
+                        dataOut.writeInt(p1Hitsp2);
+                        // if i punctured the enemy
+                        dataOut.writeInt(p2Hitsp1);
 
-                        // if p1's needle hits p2's body
-                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
-                            p1Hitsp2 = 1; p2Hitsp1 = -1;
-                        }
                     }
-                    dataOut.writeInt(p1Hitsp2);
-                    dataOut.writeInt(p2Hitsp1);
                     dataOut.writeInt(dashTimer);
                     dataOut.flush();
                     // System.out.println(dashTimer);

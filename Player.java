@@ -57,7 +57,7 @@ public class Player extends ObjectProperties {
         g2d.rotate(angle, posX, posY);
         g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
 
-        if (inviCounter % 10 < 5 && isInvincible){
+        if (isInvincible && inviCounter % 10 < 5){
             g2d.setComposite(hitAlpha);
         }
         
@@ -70,8 +70,15 @@ public class Player extends ObjectProperties {
 
         g2d.setTransform(reset);
 
-        inviCounter--;
+        System.out.println(inviCounter);
+        if (inviCounter > 0)
+            inviCounter -= 1;
+        else
+            isInvincible = false;
+
         animCounter = (animCounter + Math.abs(speedX)) % 1000;
+        
+        
     }
     // For Controls
     public void setAngleMovement(String command){
@@ -148,16 +155,11 @@ public class Player extends ObjectProperties {
         speedX = minSpeed;
         speedY = minSpeed;
         isSpeedingUp = false;
+        isInvincible = true;
+        inviCounter = Constants.INVIDURATION;
     }
 
     public boolean isInvincible(){
         return isInvincible;
-    }
-
-    public void setInvincible(boolean b){
-        isInvincible = b;
-        if (isInvincible){
-            inviCounter = Constants.INVIDURATION;
-        }
     }
 }

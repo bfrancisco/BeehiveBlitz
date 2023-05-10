@@ -17,6 +17,6 @@ public class Constants {
     public static final double BODYRADIUS = 20;
     public static final int DASHLIMIT = 400; 
 
-    public static final int INVIDURATION = 2000; // milliseconds
+    public static final int INVIDURATION = 80;
     public static final float INVIALPHA = 0.5f;
 }

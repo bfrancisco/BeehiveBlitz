@@ -14,7 +14,6 @@ public class GameCanvas extends JComponent{
     private Player enemy;
     private BufferedImage bgImage;
     private boolean enemyExists = false;
-    // private boolean isPlayerInvincible = false;
 
     private int playerID;
     private Socket socket;
@@ -165,42 +164,25 @@ public class GameCanvas extends JComponent{
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
-                    int youScore = dataIn.readInt();
-                    int isCollideP1P2 = dataIn.readInt();
-                    int isCollideP2P1 = dataIn.readInt();
+                    int gotPunctured = dataIn.readInt();
+                    int puncturedEnemy = dataIn.readInt();
                     int dashBool = dataIn.readInt(); 
                     
-                    if (enemyExists){
-                        enemy.setX(ex);
-                        enemy.setY(ey);
-                        enemy.setAngle(eA);
-                        enemy.setNeedlePoint();
-                        // player's score is always on left, enemy is on right
-                        System.out.println(youScore + " " + enemyScore);
-                        if ( (playerID == 1) && (isCollideP1P2 == -1) 
-                        && !(you.isInvincible()) 
-                        ){ 
-                            // System.out.println("p2 hits p1");
-                            enemyScore++;
-                            you.bodyPunctured();
-                            you.setInvincible(true);
-                            // isPlayerInvincible = true;
-                            startInvincibilityThread();
-                        }
-                        
-                        if ( (playerID == 2) && (isCollideP2P1 == -1) 
-                        && !(you.isInvincible()) 
-                        ){
-                            // System.out.println("p1 hits p2");
-                            enemyScore++;
-                            you.bodyPunctured();
-                            you.setInvincible(true);
-                            // isPlayerInvincible = true;
-                            startInvincibilityThread();
-                        }
-                        
+                    if (!enemyExists) continue;
+
+                    enemy.setX(ex);
+                    enemy.setY(ey);
+                    enemy.setAngle(eA);
+                    enemy.setNeedlePoint();
+                    
+                    if (gotPunctured == 1 && !you.isInvincible()){
+                        you.bodyPunctured();
                     }
-                    if (dashBool >= Constants.DASHLIMIT - 5 && enemyExists){
+                    if (puncturedEnemy == 1 && !enemy.isInvincible()){
+                        enemy.bodyPunctured();
+                    }
+                        
+                    if (dashBool >= Constants.DASHLIMIT - 5){
                         you.toggleDash();
                         enemy.toggleDash();
                     }
@@ -226,25 +208,25 @@ public class GameCanvas extends JComponent{
             }
         }
     }
-    public class InvincibilityThread implements Runnable{
-        private long invincibilityDuration = Constants.INVIDURATION;
 
-        public void run(){
-            try{
-                Thread.sleep(invincibilityDuration);
-            }catch (InterruptedException ex){
-                System.out.println("interrupetedexception from invithread");
-            }
-            // isPlayerInvincible = false;
-            you.setInvincible(false);
-        }
-    }
+    // public class InvincibilityThread implements Runnable{
+    //     private long invincibilityDuration = Constants.INVIDURATION;
 
-    public void startInvincibilityThread() {
-        InvincibilityThread inviInstance = new InvincibilityThread();
-        Thread thread = new Thread(inviInstance);
-        thread.start();
-    }
+    //     public void run(){
+    //         try{
+    //             Thread.sleep(invincibilityDuration);
+    //         }catch (InterruptedException ex){
+    //             System.out.println("interrupetedexception from invithread");
+    //         }
+    //         you.setInvincible(false);
+    //     }
+    // }
+
+    // public void startInvincibilityThread() {
+    //     InvincibilityThread inviInstance = new InvincibilityThread();
+    //     Thread thread = new Thread(inviInstance);
+    //     thread.start();
+    // }
 
     private class WriteToServer implements Runnable{
 
@@ -262,7 +244,6 @@ public class GameCanvas extends JComponent{
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
                         dataOut.writeDouble(you.getAngle());
-                        dataOut.writeInt(enemyScore);
                         dataOut.flush();
                     }
                     try{
