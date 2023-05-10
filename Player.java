@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
 
-    private BufferedImage sprite;
+    private BufferedImage sprite, sprite_flap;
     private int speedX, speedY;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
@@ -16,13 +16,17 @@ public class Player extends ObjectProperties {
     private int maxSpeed;
     private int speedIncrement;
     private boolean isSpeedingUp;
+    private boolean isInvincible;
+    private int inviCounter; // 2000
+    private int animCounter; // 1000
+    private double needleX, needleY;
+    private AlphaComposite hitAlpha;
 
-    public double needleX, needleY;
-
-    public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile){
+    public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile, String spritefileflap){
         super(x, y);
         try{
             sprite = ImageIO.read(new File(spritefile));
+            sprite_flap = ImageIO.read(new File(spritefileflap));
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -39,7 +43,11 @@ public class Player extends ObjectProperties {
         maxSpeed = ms;
         speedIncrement = si;
         isSpeedingUp = false;
+        isInvincible = false;
+        inviCounter = 0;
+        animCounter = 0;
         setNeedlePoint();
+        hitAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Constants.INVIALPHA);
     }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
@@ -48,12 +56,22 @@ public class Player extends ObjectProperties {
         
         g2d.rotate(angle, posX, posY);
         g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
-        g2d.drawImage(sprite, 0, 0, null);
+
+        if (inviCounter % 10 < 5 && isInvincible){
+            g2d.setComposite(hitAlpha);
+        }
         
-        g2d.setPaint(Color.white);
-        g2d.drawRect(0, 0, (int)width, (int)height);
-        
+        if (animCounter % 100 < 50){
+            g2d.drawImage(sprite, 0, 0, null);
+        }
+        else{
+            g2d.drawImage(sprite_flap, 0, 0, null);
+        }
+
         g2d.setTransform(reset);
+
+        inviCounter--;
+        animCounter = (animCounter + Math.abs(speedX)) % 1000;
     }
     // For Controls
     public void setAngleMovement(String command){
@@ -84,7 +102,7 @@ public class Player extends ObjectProperties {
         posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
         posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
         setNeedlePoint();
-
+        
         if (!isSpeedingUp){
             if (speedX < minSpeed){
                 speedX += speedIncrement;
@@ -130,5 +148,16 @@ public class Player extends ObjectProperties {
         speedX = minSpeed;
         speedY = minSpeed;
         isSpeedingUp = false;
+    }
+
+    public boolean isInvincible(){
+        return isInvincible;
+    }
+
+    public void setInvincible(boolean b){
+        isInvincible = b;
+        if (isInvincible){
+            inviCounter = Constants.INVIDURATION;
+        }
     }
 }

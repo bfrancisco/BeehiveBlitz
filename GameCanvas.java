@@ -14,7 +14,7 @@ public class GameCanvas extends JComponent{
     private Player enemy;
     private BufferedImage bgImage;
     private boolean enemyExists = false;
-    private boolean isPlayerInvincible = false;
+    // private boolean isPlayerInvincible = false;
 
     private int playerID;
     private Socket socket;
@@ -45,12 +45,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
         }
     }
     
@@ -178,22 +178,24 @@ public class GameCanvas extends JComponent{
                         // player's score is always on left, enemy is on right
                         System.out.println(youScore + " " + enemyScore);
                         if ( (playerID == 1) && (isCollideP1P2 == -1) 
-                        && !(isPlayerInvincible) 
+                        && !(you.isInvincible()) 
                         ){ 
                             // System.out.println("p2 hits p1");
                             enemyScore++;
                             you.bodyPunctured();
-                            isPlayerInvincible = true;
+                            you.setInvincible(true);
+                            // isPlayerInvincible = true;
                             startInvincibilityThread();
                         }
                         
                         if ( (playerID == 2) && (isCollideP2P1 == -1) 
-                        && !(isPlayerInvincible) 
+                        && !(you.isInvincible()) 
                         ){
                             // System.out.println("p1 hits p2");
                             enemyScore++;
                             you.bodyPunctured();
-                            isPlayerInvincible = true;
+                            you.setInvincible(true);
+                            // isPlayerInvincible = true;
                             startInvincibilityThread();
                         }
                         
@@ -225,7 +227,7 @@ public class GameCanvas extends JComponent{
         }
     }
     public class InvincibilityThread implements Runnable{
-        private long invincibilityDuration = 2000;
+        private long invincibilityDuration = Constants.INVIDURATION;
 
         public void run(){
             try{
@@ -233,7 +235,8 @@ public class GameCanvas extends JComponent{
             }catch (InterruptedException ex){
                 System.out.println("interrupetedexception from invithread");
             }
-            isPlayerInvincible = false;
+            // isPlayerInvincible = false;
+            you.setInvincible(false);
         }
     }
 
