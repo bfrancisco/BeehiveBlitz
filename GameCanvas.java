@@ -44,12 +44,12 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
-            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
         }
     }
     

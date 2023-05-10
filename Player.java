@@ -8,7 +8,7 @@ public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
 
     private BufferedImage sprite, sprite_flap;
-    private int speedX, speedY;
+    private int speed;
     private double angle, angleSensitivity; // in radians
     private int angleMovement; // 0 - stable, 1 - clockwise, 2 - counterclockwise
     private boolean toMove;
@@ -22,7 +22,7 @@ public class Player extends ObjectProperties {
     private double needleX, needleY;
     private AlphaComposite hitAlpha;
 
-    public Player(double x, double y, double w, double h, int sx, int sy, int si, int ms, String spritefile, String spritefileflap){
+    public Player(double x, double y, double w, double h, int s, int si, int ms, String spritefile, String spritefileflap){
         super(x, y);
         try{
             sprite = ImageIO.read(new File(spritefile));
@@ -33,13 +33,12 @@ public class Player extends ObjectProperties {
         
         setWidth(sprite.getWidth());
         setHeight(sprite.getHeight());
-        speedX = sx;
-        speedY = sy;
+        speed = s;
         angle = Constants.RAD90;
         angleSensitivity = Constants.ANGLESENS;
         angleMovement = 0;
         toMove = false;
-        minSpeed = sx;
+        minSpeed = s;
         maxSpeed = ms;
         speedIncrement = si;
         isSpeedingUp = false;
@@ -75,7 +74,7 @@ public class Player extends ObjectProperties {
         else
             isInvincible = false;
 
-        animCounter = (animCounter + speedX) % 1000;
+        animCounter = (animCounter + speed) % 1000;
         
         
     }
@@ -102,25 +101,23 @@ public class Player extends ObjectProperties {
     //     else if (command.equals("move")) toMove = true;
     // }
 
-    public boolean isDashing(){return (speedX != minSpeed && speedY != minSpeed);}
+    public boolean isDashing(){return (speed != minSpeed);}
 
     public void move(){
-        posX += Math.round(Math.cos(angle)*speedX * 100) / 100;
-        posY += Math.round(Math.sin(angle)*speedY * 100) / 100;
+        posX += Math.round(Math.cos(angle)*speed * 100) / 100;
+        posY += Math.round(Math.sin(angle)*speed * 100) / 100;
         setNeedlePoint();
         
         if (!isSpeedingUp){
-            if (speedX > minSpeed){
-                speedX = Math.max(speedX - speedIncrement, minSpeed);
-                speedY = Math.max(speedY - speedIncrement, minSpeed);
+            if (speed > minSpeed){
+                speed = Math.max(speed - speedIncrement, minSpeed);
             }
         }
         else{
-            if (speedX < maxSpeed){
-                speedX = Math.min(speedX + speedIncrement, maxSpeed);
-                speedY = Math.min(speedY + speedIncrement, maxSpeed);
+            if (speed < maxSpeed){
+                speed = Math.min(speed + speedIncrement, maxSpeed);
             }
-            if (speedX >= maxSpeed){
+            if (speed >= maxSpeed){
                 isSpeedingUp = false;
             }
         }
@@ -145,8 +142,7 @@ public class Player extends ObjectProperties {
     }
 
     public void bodyPunctured(){
-        speedX = minSpeed;
-        speedY = minSpeed;
+        speed = minSpeed;
         isSpeedingUp = false;
         isInvincible = true;
         inviCounter = Constants.INVIDURATION;
