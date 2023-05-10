@@ -12,8 +12,12 @@ public class GameCanvas extends JComponent{
     private int width, height;
     private Player you;
     private Player enemy;
-    private BufferedImage bgImage;
     private boolean enemyExists = false;
+    private int dashTimer; 
+
+    private BufferedImage bgImage;
+    private BufferedImage timeHexagon;
+    private BufferedImage timeHexagonGlow;
 
     private int playerID;
     private Socket socket;
@@ -24,22 +28,11 @@ public class GameCanvas extends JComponent{
     private Graphics dbg;
     private Image dbImage = null;
 
-    private int enemyScore = 0;
-
     public GameCanvas(int w, int h){
         width = w;
         height = h;
         this.setPreferredSize(new Dimension(width, height));
-    }
-
-    public void setUpBG( Graphics2D g2d, AffineTransform af){
-        try{
-            bgImage = ImageIO.read(new File(Constants.BGSPRITE));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        g2d.drawImage(bgImage, 0, 0, null);
-        g2d.setTransform(af);
+        
     }
 
     public void setUpSprites(){
@@ -51,7 +44,36 @@ public class GameCanvas extends JComponent{
             enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
             you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
         }
+        
+        try{
+            bgImage = ImageIO.read(new File(Constants.BGSPRITE));
+            timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
+            timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
+
+    public void drawBG( Graphics2D g2d, AffineTransform af){
+        g2d.drawImage(bgImage, 0, 0, null);
+        int midX = width/2;
+        // System.out.println(dashTimer);
+        for (int i = 100; i <= dashTimer; i += 100){
+            if (dashTimer < 300){
+                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+            }
+            else if (300 <= dashTimer && dashTimer <= 400){
+                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+            }
+            
+        }
+        g2d.setTransform(af);
+    }
+
+    
     
     private void gameRender(){
         // mostly from Killer Game Programming in Java by Andrew Davidson
@@ -78,7 +100,7 @@ public class GameCanvas extends JComponent{
         g2d.fillRect(0, 0, width, height);
 
         // draw game elements
-        setUpBG(g2d, af);
+        drawBG(g2d, af);
         enemy.draw(g2d, af);
         you.draw(g2d, af);
         
@@ -166,8 +188,7 @@ public class GameCanvas extends JComponent{
                     double eA = dataIn.readDouble();
                     int gotPunctured = dataIn.readInt();
                     int puncturedEnemy = dataIn.readInt();
-                    int dashBool = dataIn.readInt(); 
-                    
+                    dashTimer = dataIn.readInt();
                     if (!enemyExists) continue;
 
                     enemy.setX(ex);
@@ -182,7 +203,7 @@ public class GameCanvas extends JComponent{
                         enemy.bodyPunctured();
                     }
                         
-                    if (dashBool >= Constants.DASHLIMIT - 5){
+                    if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
                         you.toggleDash();
                         enemy.toggleDash();
                     }

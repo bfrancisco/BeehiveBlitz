@@ -20,7 +20,7 @@ public class GameServer{
 
     // player coordinates, angle, and needle coordinates
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
-    // private int p1s, p2s;
+    private boolean isDashing;
     private int dashTimer;
 
 
@@ -29,6 +29,7 @@ public class GameServer{
         p1y = p2y = 200;
         p2x = 450;
         p1a = p2a = -1.570796327;
+        isDashing = false;
         dashTimer = 0;
         
         System.out.println("server is running");
@@ -119,13 +120,14 @@ public class GameServer{
         public void run(){
             try{
                 while (true){
-                    if (playerID == 1){
+                    if (playerID == 1) {
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
-                        p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
-                    }else{
+                        p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100; 
+                    }
+                    else if (playerID == 2) {
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();

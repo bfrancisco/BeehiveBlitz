@@ -117,7 +117,7 @@ public class Player extends ObjectProperties {
             if (speed < maxSpeed){
                 speed = Math.min(speed + speedIncrement, maxSpeed);
             }
-            if (speed >= maxSpeed){
+            else if (speed >= maxSpeed){
                 isSpeedingUp = false;
             }
         }
