@@ -8,8 +8,8 @@ public class Constants {
     public static final String P2SPRITE = "assets/enemy.png";
     public static final String P2SPRITE2 = "assets/enemy-flap.png";
     
-    public static final int NORMALSPEED = 2; // 2
-    public static final int MAXSPEED = 20; // 30
+    public static final int NORMALSPEED = 3; // 2
+    public static final int MAXSPEED = 30; // 30
     public static final int SPEEDINCREMENT = 1;
     public static final double RAD90 = 1.57; // 1.570796327
     public static final double ANGLESENS = 0.2;

@@ -70,13 +70,12 @@ public class Player extends ObjectProperties {
 
         g2d.setTransform(reset);
 
-        System.out.println(inviCounter);
         if (inviCounter > 0)
             inviCounter -= 1;
         else
             isInvincible = false;
 
-        animCounter = (animCounter + Math.abs(speedX)) % 1000;
+        animCounter = (animCounter + speedX) % 1000;
         
         
     }
@@ -111,24 +110,18 @@ public class Player extends ObjectProperties {
         setNeedlePoint();
         
         if (!isSpeedingUp){
-            if (speedX < minSpeed){
-                speedX += speedIncrement;
-                speedY += speedIncrement;
-            }
-            if (speedX >= minSpeed){
-                speedX = minSpeed;
-                speedY = minSpeed;
+            if (speedX > minSpeed){
+                speedX = Math.max(speedX - speedIncrement, minSpeed);
+                speedY = Math.max(speedY - speedIncrement, minSpeed);
             }
         }
         else{
-            if (speedX > -maxSpeed){
-                speedX = Math.max(speedX - speedIncrement, -maxSpeed);
-                speedY = Math.max(speedY - speedIncrement, -maxSpeed);
-                // System.out.println(speedX);
+            if (speedX < maxSpeed){
+                speedX = Math.min(speedX + speedIncrement, maxSpeed);
+                speedY = Math.min(speedY + speedIncrement, maxSpeed);
             }
-            else if (speedX <= -maxSpeed){
+            if (speedX >= maxSpeed){
                 isSpeedingUp = false;
-                // System.out.println("stop speeding up");
             }
         }
     }
