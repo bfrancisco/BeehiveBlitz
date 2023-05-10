@@ -2,10 +2,10 @@ public class Constants {
     public static final int FRAMEWIDTH = 960;
     public static final int FRAMEHEIGHT = 540;
     
-    public static final String P1SPRITE = "assets/player.png";
-    public static final String P1SPRITE2 = "assets/player-flap.png";
-    public static final String P2SPRITE = "assets/enemy.png";
-    public static final String P2SPRITE2 = "assets/enemy-flap.png";
+    public static final String P1SPRITE = "assets/bee-orange.png";
+    public static final String P1SPRITE2 = "assets/bee-orange-flap.png";
+    public static final String P2SPRITE = "assets/bee-blue.png";
+    public static final String P2SPRITE2 = "assets/bee-blue-flap.png";
     public static final String BGSPRITE = "assets/background.png";
     public static final String TIMEHEXAGON = "assets/timeindicator.png";
     public static final String TIMEHEXAGONGLOW = "assets/timeindicator-glow.png";
