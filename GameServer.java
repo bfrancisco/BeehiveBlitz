@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.Timer;
 import java.awt.event.*;
+import java.util.Random;
 
 public class GameServer{
     
@@ -23,7 +24,9 @@ public class GameServer{
     private boolean isDashing;
     private int dashTimer;
     private int p1s, p2s;
-
+    private int hx, hy;
+    private boolean spawnHoney;
+    private boolean gotHoney;
 
     public GameServer(){
         p1x = 150;
@@ -32,7 +35,8 @@ public class GameServer{
         p1a = p2a = -1.570796327;
         isDashing = false;
         dashTimer = 0;
-        
+        hx = hy = -1;
+        spawnHoney = false;
         System.out.println("server is running");
         numPlayers = 0;
         maxPlayers = 2;
@@ -97,8 +101,11 @@ public class GameServer{
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
-                    System.out.println(p1s + " | " + p2s);
+                    // System.out.println(p1s + " | " + p2s);
                     dashTimer = 1;
+                }
+                if (dashTimer == Constants.DASHLIMIT/2){
+                    spawnHoney = true;
                 }
                 try{
                     Thread.sleep(10);
@@ -128,7 +135,7 @@ public class GameServer{
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
-                        p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100; 
+                        p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
                         p1s = dataIn.readInt();
                     }
                     else if (playerID == 2) {
@@ -138,7 +145,7 @@ public class GameServer{
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2s = dataIn.readInt();
-                    }
+                    } 
 
                 }
             }catch (IOException ex){
@@ -151,6 +158,7 @@ public class GameServer{
 
         private int playerID;
         private DataOutputStream dataOut;
+        Random rand = new Random();
 
         public WriteToClient(int pid, DataOutputStream out){
             playerID = pid;
@@ -167,12 +175,18 @@ public class GameServer{
                 while(true){
                     int p1Hitsp2, p2Hitsp1;
                     p1Hitsp2 = p2Hitsp1 = 0;
-                    
                     if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
                         p2Hitsp1 = 1;
                     }
                     if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
                         p1Hitsp2 = 1;
+                    }
+
+                    if (spawnHoney){
+                        hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
+                        hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                        System.out.println(hx + " | " + hy);
+                        spawnHoney = false;
                     }
 
                     if (playerID == 1){
@@ -196,6 +210,8 @@ public class GameServer{
 
                     }
                     dataOut.writeInt(dashTimer);
+                    dataOut.writeInt(hx);
+                    dataOut.writeInt(hy);
                     dataOut.flush();
                     // System.out.println(dashTimer);
                     try{

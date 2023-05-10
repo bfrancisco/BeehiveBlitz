@@ -12,6 +12,7 @@ public class GameCanvas extends JComponent{
     private int width, height;
     private Player you;
     private Player enemy;
+    private Honey honey;
     private boolean enemyExists = false;
     private int dashTimer; 
 
@@ -39,13 +40,14 @@ public class GameCanvas extends JComponent{
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
         else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
-            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            enemy = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            you = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
+        honey = new Honey(-1, -1);
         font = new Font(Constants.FONTNAME, Font.PLAIN, Constants.FONTSZ);
         orange = Color.decode("#F4A134");
         blue = Color.decode("#52A4A8");
@@ -53,7 +55,6 @@ public class GameCanvas extends JComponent{
             bgImage = ImageIO.read(new File(Constants.BGSPRITE));
             timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
             timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
-            
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -125,6 +126,7 @@ public class GameCanvas extends JComponent{
 
         // draw game elements
         drawBG(g2d, af);
+        honey.draw(g2d, af);
         enemy.draw(g2d, af);
         you.draw(g2d, af);
         
@@ -215,12 +217,18 @@ public class GameCanvas extends JComponent{
                     int gotPunctured = dataIn.readInt();
                     int enemyPunctured = dataIn.readInt();
                     dashTimer = dataIn.readInt();
+                    int hx = dataIn.readInt();
+                    int hy = dataIn.readInt();
+                    
+
                     if (!enemyExists) continue;
 
                     enemy.setX(ex);
                     enemy.setY(ey);
                     enemy.setAngle(eA);
                     enemy.setNeedlePoint();
+                    honey.setX(hx);
+                    honey.setY(hy);
                     
                     if (gotPunctured == 1 && !you.isInvincible()){
                         you.bodyPunctured();

@@ -9,6 +9,7 @@ public class Constants {
     public static final String BGSPRITE = "assets/background.png";
     public static final String TIMEHEXAGON = "assets/timeindicator.png";
     public static final String TIMEHEXAGONGLOW = "assets/timeindicator-glow.png";
+    public static final String HONEY = "assets/honey.png";
 
     public static final int NORMALSPEED = 3; // 3
     public static final int MAXSPEED = 30; // 30
@@ -26,4 +27,6 @@ public class Constants {
 
     public static final String FONTNAME = "Impact";
     public static final int FONTSZ = 42;
+
+    public static final int WINSCORE = 9;
 }

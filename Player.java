@@ -24,7 +24,7 @@ public class Player extends ObjectProperties {
     private AlphaComposite normalAlpha;
     private int score;
 
-    public Player(double x, double y, double w, double h, int s, int si, int ms, String spritefile, String spritefileflap){
+    public Player(double x, double y, int s, int si, int ms, String spritefile, String spritefileflap){
         super(x, y);
         try{
             sprite = ImageIO.read(new File(spritefile));
