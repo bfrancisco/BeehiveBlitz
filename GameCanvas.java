@@ -43,7 +43,7 @@ public class GameCanvas extends JComponent{
             you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
             enemy = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
-        else{
+        else if (playerID == 2){
             enemy = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
             you = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
@@ -280,6 +280,7 @@ public class GameCanvas extends JComponent{
         public void run(){
             try{
                 while (true){
+
                     if (enemyExists){
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
