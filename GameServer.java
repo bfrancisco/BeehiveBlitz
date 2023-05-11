@@ -185,7 +185,7 @@ public class GameServer{
                     if (spawnHoney){
                         hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
                         hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
-                        System.out.println(hx + " | " + hy);
+                        // System.out.println(hx + " | " + hy);
                         spawnHoney = false;
                     }
 

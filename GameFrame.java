@@ -7,17 +7,21 @@ public class GameFrame{
 
     private JFrame gameFrame;
     private GameCanvas gameCanvas;
+    private GameClient gameClient;
 
     public GameFrame(int width, int height){
         screenWidth = width; screenHeight = height;
         gameFrame = new JFrame();
         gameCanvas = new GameCanvas(width, height);
+        gameClient = new GameClient();
+        gameClient.setGameCanvas(gameCanvas);
     }
 
     public void setUpGUI(){
-        gameFrame.setTitle("Beehive Blitz: Player# " + gameCanvas.getPlayerID());
+        gameFrame.setTitle("Beehive Blitz: Player# " + gameClient.getPlayerID());
         gameCanvas.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        
+        gameCanvas.setPlayerID(gameClient.getPlayerID());
+
         gameFrame.add(gameCanvas);
         gameFrame.pack();
         gameCanvas.setUpSprites();
@@ -66,17 +70,17 @@ public class GameFrame{
         public void actionPerformed(ActionEvent ae) {
             
             if (command.equals("print")){
-                System.out.print(gameCanvas.getPlayer().getX());
-                System.out.print(" " +  gameCanvas.getPlayer().getY() + " " + gameCanvas.getPlayer().getAngle() + "\n");
+                System.out.print(gameCanvas.getYou().getX());
+                System.out.print(" " +  gameCanvas.getYou().getY() + " " + gameCanvas.getYou().getAngle() + "\n");
             }
             else if (!command.equals("move") && !command.equals("stopMove")){
-                gameCanvas.getPlayer().setAngleMovement(command);
+                gameCanvas.getYou().setAngleMovement(command);
             }
             // else{
-            //     gameCanvas.getPlayer().setMovement(command);
+            //     gameCanvas.getYou().setMovement(command);
             // }
         }
     }
 
-    public void connectToServer(){gameCanvas.connectToServer();}
+    public void connectToServer(){gameClient.connectToServer();}
 }

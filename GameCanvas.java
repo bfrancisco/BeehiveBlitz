@@ -10,11 +10,14 @@ import javax.imageio.ImageIO;
 
 public class GameCanvas extends JComponent{
     private int width, height;
+    
     private Player you;
     private Player enemy;
     private Honey honey;
     private boolean enemyExists = false;
     private int dashTimer; 
+
+    private int yourID;
 
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
@@ -22,11 +25,6 @@ public class GameCanvas extends JComponent{
     private Font font, fontOffset;
     private Color blue, orange;
 
-    private int playerID;
-    private Socket socket;
-    private ReadFromServer rfsRunnable;
-    private WriteToServer wtsRunnable;
-    
     // for Double-Buffering, in reference of Killer Game Programming in Java by Andrew Davidson
     private Graphics dbg;
     private Image dbImage = null;
@@ -38,12 +36,16 @@ public class GameCanvas extends JComponent{
         
     }
 
+    public void setPlayerID(int i){
+        yourID = i;
+    }
+
     public void setUpSprites(){
-        if (playerID == 1){
+        if (yourID == 1){
             you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
             enemy = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
-        else if (playerID == 2){
+        else if (yourID == 2){
             enemy = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
             you = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
@@ -78,17 +80,18 @@ public class GameCanvas extends JComponent{
         }
         
         // draw score
+        // System.out.println(you.getScore() + " | " + enemy.getScore());
         String youScoreStr = Integer.toString(you.getScore());
         String enemyScoreStr = Integer.toString(enemy.getScore());
         FontMetrics metrics = g2d.getFontMetrics();
         g2d.setFont(font);
-        if (playerID == 1){
+        if (yourID == 1){
             g2d.setPaint(orange);
             g2d.drawString(youScoreStr, midX - 295 - (metrics.stringWidth(youScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
             g2d.setPaint(blue);
             g2d.drawString(enemyScoreStr, midX + 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
         }
-        else if (playerID == 2){
+        else if (yourID == 2){
             g2d.setPaint(orange);
             g2d.drawString(enemyScoreStr, midX - 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
             g2d.setPaint(blue);
@@ -97,8 +100,6 @@ public class GameCanvas extends JComponent{
         
         g2d.setTransform(af);
     }
-
-    
     
     private void gameRender(){
         // mostly from Killer Game Programming in Java by Andrew Davidson
@@ -182,125 +183,20 @@ public class GameCanvas extends JComponent{
             you.setY(height);
         }
     }
-
-    public void connectToServer(){
-        System.out.println("Client");
-        try{
-            socket = new Socket("localhost", 51734);
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            playerID = in.readInt();
-            System.out.println("Connected as p#" + playerID);
-            rfsRunnable = new ReadFromServer(in);
-            wtsRunnable = new WriteToServer(out);
-            rfsRunnable.waitForStartMsg();
-        }catch (IOException ex){
-            System.out.println("Server not found");
-        }
+    public void setDashTimer(int dT){
+        dashTimer = dT;
     }
-
-    private class ReadFromServer implements Runnable{
-
-        private DataInputStream dataIn;
-
-        public ReadFromServer(DataInputStream in){
-            dataIn = in;
-            System.out.println("RFS Runnable created");
-        }
-
-        public void run(){
-            try{
-                while (true){
-                    double ex = dataIn.readDouble();
-                    double ey = dataIn.readDouble();
-                    double eA = dataIn.readDouble();
-                    int gotPunctured = dataIn.readInt();
-                    int enemyPunctured = dataIn.readInt();
-                    dashTimer = dataIn.readInt();
-                    int hx = dataIn.readInt();
-                    int hy = dataIn.readInt();
-                    
-
-                    if (!enemyExists) continue;
-
-                    enemy.setX(ex);
-                    enemy.setY(ey);
-                    enemy.setAngle(eA);
-                    enemy.setNeedlePoint();
-                    honey.setX(hx);
-                    honey.setY(hy);
-                    
-                    if (gotPunctured == 1 && !you.isInvincible()){
-                        you.bodyPunctured();
-                        enemy.addScore(1);
-                        // System.out.println("gotpuncutred");
-                    }
-                    if (enemyPunctured == 1 && !enemy.isInvincible()){
-                        enemy.bodyPunctured();
-                        you.addScore(1);
-                        // System.out.println("enemyPunctured");
-                    }
-                        
-                    if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
-                        you.toggleDash();
-                        enemy.toggleDash();
-                    }
-        
-                }
-            }catch (IOException ex){
-                System.out.println("IOException from RFS run");
-            }
-        }
-
-        public void waitForStartMsg(){
-            try{
-                String startMsg = dataIn.readUTF();
-                System.out.println("Message from server: " + startMsg);
-                
-                Thread readThread = new Thread(rfsRunnable);
-                Thread writeThread = new Thread(wtsRunnable);
-                readThread.start();
-                writeThread.start();
-                
-            }catch (IOException ex){
-                System.out.println("IOException for wait for start");
-            }
-        }
-    }
-
-    private class WriteToServer implements Runnable{
-
-        private DataOutputStream dataOut;
-
-        public WriteToServer(DataOutputStream out){
-            dataOut = out;
-            System.out.println("WTS Runnable created");
-        }
-
-        public void run(){
-            try{
-                while (true){
-
-                    if (enemyExists){
-                        dataOut.writeDouble(you.getX());
-                        dataOut.writeDouble(you.getY());
-                        dataOut.writeDouble(you.getAngle());
-                        dataOut.writeInt(you.getScore());
-                        dataOut.flush();
-                    }
-                    try{
-                        Thread.sleep(10);
-                    }catch (InterruptedException ex){
-                        System.out.println("InterruptedException fr wts run");
-                    }
-                }
-            } catch (IOException ex){
-                System.out.println("IOException from wts run");
-            }
-        }
-    }
-
     // get methods
-    public Player getPlayer(){return you;}
-    public int getPlayerID(){return playerID;}
+    public Player getYou(){
+        return you;
+    }
+    public Player getEnemy(){
+        return enemy;
+    }
+    public Honey getHoney(){
+        return honey;
+    }
+    public boolean doesEnemyExists(){
+        return enemyExists;
+    }
 }
