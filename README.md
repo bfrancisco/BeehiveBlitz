@@ -1,4 +1,4 @@
 # Base Rush
 
 ## To-Do
-- Create a functioning server
+- Transfer server to AWS

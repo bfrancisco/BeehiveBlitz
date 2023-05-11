@@ -21,7 +21,10 @@ public class GameClient{
     public void connectToServer(){
         System.out.println("Client");
         try{
-            socket = new Socket("localhost", 51734);
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Insert IP Address: ");
+            String ipAddress = scan.nextLine();
+            socket = new Socket(ipAddress, 51734);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
