@@ -22,9 +22,11 @@ public class GameClient{
         System.out.println("Client");
         try{
             Scanner scan = new Scanner(System.in);
-            System.out.println("Insert IP Address: ");
+            System.out.print("Insert IP Address: ");
             String ipAddress = scan.nextLine();
-            socket = new Socket(ipAddress, 51734);
+            System.out.print("Port: ");
+            int portNumber= Integer.parseInt(scan.nextLine());
+            socket = new Socket(ipAddress, portNumber);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();

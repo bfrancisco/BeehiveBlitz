@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.Timer;
 import java.awt.event.*;
-import java.util.Random;
+// import java.util.Random;
 
 public class GameServer{
     
@@ -41,7 +41,9 @@ public class GameServer{
         numPlayers = 0;
         maxPlayers = 2;
         try{
-            ss = new ServerSocket(51734);
+            System.out.println("socket not yet created");
+            ss = new ServerSocket(24396);
+            System.out.println("socket created");
         }
         catch (IOException ex){
              System.out.println("IOException from GameServer Constructor");
@@ -158,7 +160,7 @@ public class GameServer{
 
         private int playerID;
         private DataOutputStream dataOut;
-        Random rand = new Random();
+        // Random rand = new Random();
 
         public WriteToClient(int pid, DataOutputStream out){
             playerID = pid;
@@ -183,8 +185,9 @@ public class GameServer{
                     }
 
                     if (spawnHoney){
-                        hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
-                        hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                        // hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
+                        // hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                        hx = hy = 250;
                         // System.out.println(hx + " | " + hy);
                         spawnHoney = false;
                     }
