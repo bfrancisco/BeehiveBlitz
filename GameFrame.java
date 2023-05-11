@@ -15,7 +15,7 @@ public class GameFrame{
     }
 
     public void setUpGUI(){
-        gameFrame.setTitle("Base Rush: Player# " + gameCanvas.getPlayerID());
+        gameFrame.setTitle("Beehive Blitz: Player# " + gameCanvas.getPlayerID());
         gameCanvas.setPreferredSize(new Dimension(screenWidth, screenHeight));
         
         gameFrame.add(gameCanvas);
@@ -23,7 +23,8 @@ public class GameFrame{
         gameCanvas.setUpSprites();
         gameCanvas.SetUpGameUpdate();
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setVisible(true);      
+        gameFrame.setVisible(true);
+        gameFrame.setResizable(false);
     }
 
     public void setKeyBindings(){

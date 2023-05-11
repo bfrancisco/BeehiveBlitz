@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.Timer;
 import java.awt.event.*;
+import java.util.Random;
 
 public class GameServer{
     
@@ -20,25 +21,29 @@ public class GameServer{
 
     // player coordinates, angle, and needle coordinates
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
-    private int p1s, p2s;
-
+    private boolean isDashing;
     private int dashTimer;
-    private static final int DASHLIMIT = 200;
-
+    private int p1s, p2s;
+    private int hx, hy;
+    private boolean spawnHoney;
+    private boolean gotHoney;
 
     public GameServer(){
         p1x = 150;
         p1y = p2y = 200;
         p2x = 450;
         p1a = p2a = -1.570796327;
+        isDashing = false;
         dashTimer = 0;
-        
+        hx = hy = -1;
+        spawnHoney = false;
         System.out.println("server is running");
         numPlayers = 0;
         maxPlayers = 2;
         try{
             ss = new ServerSocket(51734);
-        }catch (IOException ex){
+        }
+        catch (IOException ex){
              System.out.println("IOException from GameServer Constructor");
         }
     }
@@ -96,7 +101,11 @@ public class GameServer{
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
+                    // System.out.println(p1s + " | " + p2s);
                     dashTimer = 1;
+                }
+                if (dashTimer == Constants.DASHLIMIT/2){
+                    spawnHoney = true;
                 }
                 try{
                     Thread.sleep(10);
@@ -121,21 +130,22 @@ public class GameServer{
         public void run(){
             try{
                 while (true){
-                    if (playerID == 1){
+                    if (playerID == 1) {
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
-                        p2s = dataIn.readInt();
                         p1nx = p1x - Math.round(Math.cos(p1a)*Constants.NEEDLEDIST * 100) / 100;
                         p1ny = p1y - Math.round(Math.sin(p1a)*Constants.NEEDLEDIST * 100) / 100;
-                    }else{
+                        p1s = dataIn.readInt();
+                    }
+                    else if (playerID == 2) {
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
-                        p1s = dataIn.readInt();
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
-                    }
+                        p2s = dataIn.readInt();
+                    } 
 
                 }
             }catch (IOException ex){
@@ -148,6 +158,7 @@ public class GameServer{
 
         private int playerID;
         private DataOutputStream dataOut;
+        Random rand = new Random();
 
         public WriteToClient(int pid, DataOutputStream out){
             playerID = pid;
@@ -163,33 +174,44 @@ public class GameServer{
             try{
                 while(true){
                     int p1Hitsp2, p2Hitsp1;
-                    p1Hitsp2 = p2Hitsp1 = 0; // 1 = true, 0 = no collision, -1 opposite happens; xHitsy then -1 means that yHitsx = 1
-                    
-                    if(playerID == 1){
+                    p1Hitsp2 = p2Hitsp1 = 0;
+                    if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                        p2Hitsp1 = 1;
+                    }
+                    if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                        p1Hitsp2 = 1;
+                    }
+
+                    if (spawnHoney){
+                        hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
+                        hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                        System.out.println(hx + " | " + hy);
+                        spawnHoney = false;
+                    }
+
+                    if (playerID == 1){
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);
                         dataOut.writeDouble(p2a);
-                        dataOut.writeInt(p1s);
-
-                        // if p2's needle hits p1's body
-                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
-                            p2Hitsp1 = 1; p1Hitsp2 = -1;
-                        }
+                        // if i got punctured
+                        dataOut.writeInt(p2Hitsp1);
+                        // if i punctured the enemy
+                        dataOut.writeInt(p1Hitsp2);
+                        
                     }
-                    else{
+                    else if (playerID == 2){
                         dataOut.writeDouble(p1x);
                         dataOut.writeDouble(p1y);
                         dataOut.writeDouble(p1a);
-                        dataOut.writeInt(p2s);
+                        // if i got punctured
+                        dataOut.writeInt(p1Hitsp2);
+                        // if i punctured the enemy
+                        dataOut.writeInt(p2Hitsp1);
 
-                        // if p1's needle hits p2's body
-                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
-                            p1Hitsp2 = 1; p2Hitsp1 = -1;
-                        }
                     }
-                    dataOut.writeInt(p1Hitsp2);
-                    dataOut.writeInt(p2Hitsp1);
                     dataOut.writeInt(dashTimer);
+                    dataOut.writeInt(hx);
+                    dataOut.writeInt(hy);
                     dataOut.flush();
                     // System.out.println(dashTimer);
                     try{

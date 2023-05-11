@@ -12,9 +12,15 @@ public class GameCanvas extends JComponent{
     private int width, height;
     private Player you;
     private Player enemy;
-    private BufferedImage bgImage;
+    private Honey honey;
     private boolean enemyExists = false;
-    private boolean isPlayerInvincible = false;
+    private int dashTimer; 
+
+    private BufferedImage bgImage;
+    private BufferedImage timeHexagon;
+    private BufferedImage timeHexagonGlow;
+    private Font font, fontOffset;
+    private Color blue, orange;
 
     private int playerID;
     private Socket socket;
@@ -25,34 +31,74 @@ public class GameCanvas extends JComponent{
     private Graphics dbg;
     private Image dbImage = null;
 
-    private int enemyScore = 0;
-
     public GameCanvas(int w, int h){
         width = w;
         height = h;
         this.setPreferredSize(new Dimension(width, height));
-    }
-
-    public void setUpBG( Graphics2D g2d, AffineTransform af){
-        try{
-            bgImage = ImageIO.read(new File(Constants.BGSPRITE));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        g2d.drawImage(bgImage, 0, 0, null);
-        g2d.setTransform(af);
+        
     }
 
     public void setUpSprites(){
         if (playerID == 1){
-            you = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
-            enemy = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
+            you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
-        else{
-            enemy = new Player(width/2 - width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE);
-            you = new Player(width/2 + width/4, height/2, 100, 50, Constants.NORMALSPEED, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE);
+        else if (playerID == 2){
+            enemy = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
+            you = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
+        honey = new Honey(-1, -1);
+        font = new Font(Constants.FONTNAME, Font.PLAIN, Constants.FONTSZ);
+        orange = Color.decode("#F4A134");
+        blue = Color.decode("#52A4A8");
+        try{
+            bgImage = ImageIO.read(new File(Constants.BGSPRITE));
+            timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
+            timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
+
+    public void drawBG( Graphics2D g2d, AffineTransform af){
+        g2d.drawImage(bgImage, 0, 0, null);
+        
+        // draw timer indicators
+        int midX = width/2;
+        for (int i = 100; i <= dashTimer; i += 100){
+            if (dashTimer < 300){
+                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+            }
+            else if (300 <= dashTimer && dashTimer <= 400){
+                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+            }
+        }
+        
+        // draw score
+        String youScoreStr = Integer.toString(you.getScore());
+        String enemyScoreStr = Integer.toString(enemy.getScore());
+        FontMetrics metrics = g2d.getFontMetrics();
+        g2d.setFont(font);
+        if (playerID == 1){
+            g2d.setPaint(orange);
+            g2d.drawString(youScoreStr, midX - 295 - (metrics.stringWidth(youScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+            g2d.setPaint(blue);
+            g2d.drawString(enemyScoreStr, midX + 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+        }
+        else if (playerID == 2){
+            g2d.setPaint(orange);
+            g2d.drawString(enemyScoreStr, midX - 295 - (metrics.stringWidth(enemyScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+            g2d.setPaint(blue);
+            g2d.drawString(youScoreStr, midX + 295 - (metrics.stringWidth(youScoreStr)/2) - 8, 82 + (metrics.getHeight()/2));
+        }
+        
+        g2d.setTransform(af);
+    }
+
+    
     
     private void gameRender(){
         // mostly from Killer Game Programming in Java by Andrew Davidson
@@ -79,7 +125,8 @@ public class GameCanvas extends JComponent{
         g2d.fillRect(0, 0, width, height);
 
         // draw game elements
-        setUpBG(g2d, af);
+        drawBG(g2d, af);
+        honey.draw(g2d, af);
         enemy.draw(g2d, af);
         you.draw(g2d, af);
         
@@ -100,6 +147,8 @@ public class GameCanvas extends JComponent{
         catch (Exception e){
             System.out.println("Graphics context error: " + e);
         }
+
+        // System.out.println(you.getScore() + " | " + enemy.getScore());
     }
 
     public void SetUpGameUpdate(){
@@ -165,40 +214,34 @@ public class GameCanvas extends JComponent{
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
-                    int youScore = dataIn.readInt();
-                    int isCollideP1P2 = dataIn.readInt();
-                    int isCollideP2P1 = dataIn.readInt();
-                    int dashBool = dataIn.readInt(); 
+                    int gotPunctured = dataIn.readInt();
+                    int enemyPunctured = dataIn.readInt();
+                    dashTimer = dataIn.readInt();
+                    int hx = dataIn.readInt();
+                    int hy = dataIn.readInt();
                     
-                    if (enemyExists){
-                        enemy.setX(ex);
-                        enemy.setY(ey);
-                        enemy.setAngle(eA);
-                        enemy.setNeedlePoint();
-                        // player's score is always on left, enemy is on right
-                        System.out.println(youScore + " " + enemyScore);
-                        if ( (playerID == 1) && (isCollideP1P2 == -1) 
-                        && !(isPlayerInvincible) 
-                        ){ 
-                            // System.out.println("p2 hits p1");
-                            enemyScore++;
-                            you.bodyPunctured();
-                            isPlayerInvincible = true;
-                            startInvincibilityThread();
-                        }
-                        
-                        if ( (playerID == 2) && (isCollideP2P1 == -1) 
-                        && !(isPlayerInvincible) 
-                        ){
-                            // System.out.println("p1 hits p2");
-                            enemyScore++;
-                            you.bodyPunctured();
-                            isPlayerInvincible = true;
-                            startInvincibilityThread();
-                        }
-                        
+
+                    if (!enemyExists) continue;
+
+                    enemy.setX(ex);
+                    enemy.setY(ey);
+                    enemy.setAngle(eA);
+                    enemy.setNeedlePoint();
+                    honey.setX(hx);
+                    honey.setY(hy);
+                    
+                    if (gotPunctured == 1 && !you.isInvincible()){
+                        you.bodyPunctured();
+                        enemy.addScore(1);
+                        // System.out.println("gotpuncutred");
                     }
-                    if (dashBool >= Constants.DASHLIMIT - 5 && enemyExists){
+                    if (enemyPunctured == 1 && !enemy.isInvincible()){
+                        enemy.bodyPunctured();
+                        you.addScore(1);
+                        // System.out.println("enemyPunctured");
+                    }
+                        
+                    if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
                         you.toggleDash();
                         enemy.toggleDash();
                     }
@@ -224,24 +267,6 @@ public class GameCanvas extends JComponent{
             }
         }
     }
-    public class InvincibilityThread implements Runnable{
-        private long invincibilityDuration = 2000;
-
-        public void run(){
-            try{
-                Thread.sleep(invincibilityDuration);
-            }catch (InterruptedException ex){
-                System.out.println("interrupetedexception from invithread");
-            }
-            isPlayerInvincible = false;
-        }
-    }
-
-    public void startInvincibilityThread() {
-        InvincibilityThread inviInstance = new InvincibilityThread();
-        Thread thread = new Thread(inviInstance);
-        thread.start();
-    }
 
     private class WriteToServer implements Runnable{
 
@@ -255,11 +280,12 @@ public class GameCanvas extends JComponent{
         public void run(){
             try{
                 while (true){
+
                     if (enemyExists){
                         dataOut.writeDouble(you.getX());
                         dataOut.writeDouble(you.getY());
                         dataOut.writeDouble(you.getAngle());
-                        dataOut.writeInt(enemyScore);
+                        dataOut.writeInt(you.getScore());
                         dataOut.flush();
                     }
                     try{
