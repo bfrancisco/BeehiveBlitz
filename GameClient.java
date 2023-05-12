@@ -22,12 +22,12 @@ public class GameClient{
         System.out.println("Client");
         try{
             Scanner scan = new Scanner(System.in);
-            // System.out.print("Insert IP Address: ");
-            // String ipAddress = scan.nextLine();
-            String ipAddress = "localhost";
-            // System.out.print("Port: ");
-            // int portNumber = Integer.parseInt(scan.nextLine());
-            int portNumber = 24396;
+            System.out.print("Insert IP Address: ");
+            String ipAddress = scan.nextLine();
+            System.out.print("Port: ");
+            int portNumber = Integer.parseInt(scan.nextLine());
+            // String ipAddress = "localhost";
+            // int portNumber = 24396;
             socket = new Socket(ipAddress, portNumber);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -74,6 +74,9 @@ public class GameClient{
                     else if (canvas.getGameState() == 1 && serverGameState == 2){
                         canvas.setGameState(2);
                     }
+                    else if (canvas.getGameState() == 2 && serverGameState == 0){
+                        canvas.pressRestart();
+                    }
                     canvas.setDashTimer(dashTimer);
                     canvas.getEnemy().setX(ex);
                     canvas.getEnemy().setY(ey);
@@ -104,13 +107,14 @@ public class GameClient{
                             canvas.getEnemy().addScore(1);
                             canvas.getEnemy().gotHoney();
                         }
+
+                        if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
+                            canvas.getYou().toggleDash();
+                            canvas.getEnemy().toggleDash();
+                        }
                     }
                     
-                    if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
-                        canvas.getYou().toggleDash();
-                        canvas.getEnemy().toggleDash();
-                        // System.out.println(canvas.getYou().getScore() + " | " + canvas.getEnemy().getScore());
-                    }
+                    
         
                 }
             }catch (IOException ex){

@@ -121,21 +121,23 @@ public class GameCanvas extends JComponent{
     public void drawBG(Graphics2D g2d, AffineTransform af){
         g2d.drawImage(bgImage, 0, 0, null);
         
-        // draw timer indicators
         int midX = width/2;
-        for (int i = 100; i <= dashTimer; i += 100){
-            if (dashTimer < 300){
-                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
-                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
-            }
-            else if (300 <= dashTimer && dashTimer <= 400){
-                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
-                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+
+        // draw timer indicators
+        if (gameState == 1){
+            for (int i = 100; i <= dashTimer; i += 100){
+                if (dashTimer < 300){
+                    g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                    g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                }
+                else if (300 <= dashTimer && dashTimer <= 400){
+                    g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                    g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                }
             }
         }
         
         // draw score
-        // System.out.println(you.getScore() + " | " + enemy.getScore());
         String youScoreStr = Integer.toString(you.getScore());
         String enemyScoreStr = Integer.toString(enemy.getScore());
         FontMetrics metrics = g2d.getFontMetrics();

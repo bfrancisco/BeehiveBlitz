@@ -32,7 +32,7 @@ public class Constants {
     public static final String FONTNAME = "Impact";
     public static final int FONTSZ = 42;
 
-    public static final int WINSCORE = 1;
+    public static final int WINSCORE = 9;
     public static final int HONEYRAD = 23;
     public static final int GOTHONEYDURATION = 80;
 }

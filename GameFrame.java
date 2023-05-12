@@ -77,13 +77,11 @@ public class GameFrame{
             }
             else if (gameCanvas.getGameState() == 0){
                 if (command.equals("startGame")){
-                    System.out.println("Game started");
                     gameCanvas.pressStart();
                 }
             }
             else if (gameCanvas.getGameState() == 2){
                 if (command.equals("restartGame")){
-                    System.out.println("Game restarted");
                     gameCanvas.pressRestart();
                 }
             }

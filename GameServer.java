@@ -140,7 +140,6 @@ public class GameServer{
         public void run(){
             try{
                 while (true){
-                    System.out.println(dashTimer);
                     if (playerID == 1) {
                         p1gs = dataIn.readInt();
                         p1x = dataIn.readDouble();
