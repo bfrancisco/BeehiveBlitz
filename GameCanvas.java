@@ -19,6 +19,7 @@ public class GameCanvas extends JComponent{
 
     private int yourID;
 
+    private BufferedImage startMenuBG;
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
     private BufferedImage timeHexagonGlow;
@@ -35,6 +36,10 @@ public class GameCanvas extends JComponent{
         gameState = 0;
         this.setPreferredSize(new Dimension(width, height));
         
+    }
+
+    public int getGameState(){
+        return gameState;
     }
 
     public void setGameState(int g){
@@ -59,6 +64,7 @@ public class GameCanvas extends JComponent{
         orange = Color.decode("#F4A134");
         blue = Color.decode("#52A4A8");
         try{
+            startMenuBG = ImageIO.read(new File(Constants.STARTMENUBG));
             bgImage = ImageIO.read(new File(Constants.BGSPRITE));
             timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
             timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
@@ -68,7 +74,11 @@ public class GameCanvas extends JComponent{
 
     }
 
-    public void drawBG( Graphics2D g2d, AffineTransform af){
+    public void drawStartMenu(Graphics2D g2d, AffineTransform af){
+        g2d.drawImage(startMenuBG, 0, 0, null);
+    }
+
+    public void drawBG(Graphics2D g2d, AffineTransform af){
         g2d.drawImage(bgImage, 0, 0, null);
         
         // draw timer indicators
@@ -131,11 +141,16 @@ public class GameCanvas extends JComponent{
         g2d.fillRect(0, 0, width, height);
 
         // draw game elements
-        drawBG(g2d, af);
-        honey.draw(g2d, af);
-        enemy.draw(g2d, af);
-        you.draw(g2d, af);
-        
+        if (gameState == 0){
+            drawStartMenu(g2d, af);
+        }
+        else if (gameState == 1){
+            drawBG(g2d, af);
+            honey.draw(g2d, af);
+            enemy.draw(g2d, af);
+            you.draw(g2d, af);
+        }
+            
         enemyExists = true;
         
     }
@@ -162,9 +177,11 @@ public class GameCanvas extends JComponent{
         new java.util.Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                you.moveAngle();
-                you.move();
-                handleBorderCollision();
+                if (gameState == 1){
+                    you.moveAngle();
+                    you.move();
+                    handleBorderCollision();
+                }
                 gameRender();
                 paintScreen();
             }}, 0, 30);

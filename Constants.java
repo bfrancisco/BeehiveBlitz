@@ -7,6 +7,7 @@ public class Constants {
     public static final String P2SPRITE = "assets/bee-blue.png";
     public static final String P2SPRITE2 = "assets/bee-blue-flap.png";
     public static final String BGSPRITE = "assets/background.png";
+    public static final String STARTMENUBG = "assets/startmenubg.png";
     public static final String TIMEHEXAGON = "assets/timeindicator.png";
     public static final String TIMEHEXAGONGLOW = "assets/timeindicator-glow.png";
     public static final String HONEY = "assets/honey.png";
