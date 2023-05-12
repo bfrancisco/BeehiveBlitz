@@ -42,7 +42,7 @@ public class GameFrame{
         am.put("ccw", new MoveAction("ccw"));
         am.put("stop", new MoveAction("stop"));
         am.put("startGame", new MoveAction("startGame"));
-        
+        am.put("restartGame", new MoveAction("restartGame"));
         am.put("print", new MoveAction("print"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "cw");
@@ -50,6 +50,7 @@ public class GameFrame{
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "stop");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stop");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false), "startGame");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0, false), "restartGame");
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "print");
         
@@ -78,6 +79,12 @@ public class GameFrame{
                 if (command.equals("startGame")){
                     System.out.println("Game started");
                     gameCanvas.pressStart();
+                }
+            }
+            else if (gameCanvas.getGameState() == 2){
+                if (command.equals("restartGame")){
+                    System.out.println("Game restarted");
+                    gameCanvas.pressRestart();
                 }
             }
         }

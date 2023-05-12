@@ -140,7 +140,7 @@ public class GameServer{
         public void run(){
             try{
                 while (true){
-                    
+                    System.out.println(dashTimer);
                     if (playerID == 1) {
                         p1gs = dataIn.readInt();
                         p1x = dataIn.readDouble();
@@ -162,6 +162,12 @@ public class GameServer{
                     if (serverGameState == 0 && p1gs == 1 && p2gs == 1){
                         setInitialGameStats();
                         serverGameState = 1;
+                    }
+                    else if (serverGameState == 1 && p1gs == 2 && p2gs == 2){
+                        serverGameState = 2;
+                    }
+                    else if (serverGameState == 2 && p1gs == 0 && p2gs == 0){
+                        setInitialGameStats();
                     }
 
                 }
@@ -191,23 +197,30 @@ public class GameServer{
                 while(true){
                     p1Hitsp2 = p2Hitsp1 = p1GetsH = p2GetsH = 0;                 
                     
-                    // Check bee collision
-                    if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
-                        p2Hitsp1 = 1;
-                    }
-                    if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
-                        p1Hitsp2 = 1;
+                    if (serverGameState == 1 && p1s == Constants.WINSCORE || p2s == Constants.WINSCORE){
+                        serverGameState = 2;
                     }
 
-                    // Check honey collision
-                    double p1toH = getDistance(p1x, p1y, (double)hx, (double)hy);
-                    double p2toH = getDistance(p2x, p2y, (double)hx, (double)hy);
-                    if (Math.min(p1toH, p2toH) <= Constants.HONEYRAD){
-                        if (p1toH <= p2toH)
-                            p1GetsH = 1;
-                        else
-                            p2GetsH = 1;
+                    if (serverGameState == 1){
+                        // Check bee collision
+                        if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
+                            p2Hitsp1 = 1;
+                        }
+                        if (getDistance(p2x, p2y, p1nx, p1ny) <= Constants.BODYRADIUS){
+                            p1Hitsp2 = 1;
+                        }
+
+                        // Check honey collision
+                        double p1toH = getDistance(p1x, p1y, (double)hx, (double)hy);
+                        double p2toH = getDistance(p2x, p2y, (double)hx, (double)hy);
+                        if (Math.min(p1toH, p2toH) <= Constants.HONEYRAD){
+                            if (p1toH <= p2toH)
+                                p1GetsH = 1;
+                            else
+                                p2GetsH = 1;
+                        }
                     }
+                    
 
                     dataOut.writeInt(serverGameState);
                     if (playerID == 1){

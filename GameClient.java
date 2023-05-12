@@ -68,8 +68,11 @@ public class GameClient{
 
                     if (!canvas.doesEnemyExists()) continue;
 
-                    if (serverGameState == 1){
+                    if (canvas.getGameState() == 0 && serverGameState == 1){
                         canvas.setGameState(1);
+                    }
+                    else if (canvas.getGameState() == 1 && serverGameState == 2){
+                        canvas.setGameState(2);
                     }
                     canvas.setDashTimer(dashTimer);
                     canvas.getEnemy().setX(ex);
@@ -79,27 +82,28 @@ public class GameClient{
                     canvas.getHoney().setX(hx);
                     canvas.getHoney().setY(hy);
                     
-
-                    if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
-                        canvas.getYou().bodyPunctured();
-                        canvas.getEnemy().addScore(1);
-                        canvas.getYou().addScore(-1);
-                        // System.out.println("gotpuncutred");
-                    }
-                    if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
-                        canvas.getEnemy().bodyPunctured();
-                        canvas.getYou().addScore(1);
-                        canvas.getEnemy().addScore(-1);
-                        // System.out.println("enemyPunctured");
-                    }
-
-                    if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
-                        canvas.getYou().addScore(1);
-                        canvas.getYou().gotHoney();
-                    }
-                    if (enemyHoney == 1 && !canvas.getEnemy().justGotHoney()){
-                        canvas.getEnemy().addScore(1);
-                        canvas.getEnemy().gotHoney();
+                    if (canvas.getGameState() == 1){
+                        if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
+                            canvas.getYou().bodyPunctured();
+                            canvas.getEnemy().addScore(1);
+                            canvas.getYou().addScore(-1);
+                            // System.out.println("gotpuncutred");
+                        }
+                        if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
+                            canvas.getEnemy().bodyPunctured();
+                            canvas.getYou().addScore(1);
+                            canvas.getEnemy().addScore(-1);
+                            // System.out.println("enemyPunctured");
+                        }
+    
+                        if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
+                            canvas.getYou().addScore(1);
+                            canvas.getYou().gotHoney();
+                        }
+                        if (enemyHoney == 1 && !canvas.getEnemy().justGotHoney()){
+                            canvas.getEnemy().addScore(1);
+                            canvas.getEnemy().gotHoney();
+                        }
                     }
                     
                     if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
