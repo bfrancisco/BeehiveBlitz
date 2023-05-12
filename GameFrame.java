@@ -41,21 +41,18 @@ public class GameFrame{
         am.put("cw", new MoveAction("cw"));
         am.put("ccw", new MoveAction("ccw"));
         am.put("stop", new MoveAction("stop"));
-
+        am.put("startGame", new MoveAction("startGame"));
+        am.put("restartGame", new MoveAction("restartGame"));
         am.put("print", new MoveAction("print"));
-
-        am.put("move", new MoveAction("move"));
-        am.put("stopMove", new MoveAction("stopMove"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "cw");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "ccw");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "stop");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stop");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false), "startGame");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0, false), "restartGame");
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "print");
-
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "move");
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true), "stopMove");
         
     }
 
@@ -69,16 +66,25 @@ public class GameFrame{
         @Override
         public void actionPerformed(ActionEvent ae) {
             
-            if (command.equals("print")){
-                System.out.print(gameCanvas.getYou().getX());
-                System.out.print(" " +  gameCanvas.getYou().getY() + " " + gameCanvas.getYou().getAngle() + "\n");
+            if (gameCanvas.getGameState() == 1){
+                if (command.equals("print")){
+                    System.out.print(gameCanvas.getYou().getX());
+                    System.out.print(" " +  gameCanvas.getYou().getY() + " " + gameCanvas.getYou().getAngle() + "\n");
+                }
+                else if (!command.equals("move") && !command.equals("stopMove")){
+                    gameCanvas.getYou().setAngleMovement(command);
+                }
             }
-            else if (!command.equals("move") && !command.equals("stopMove")){
-                gameCanvas.getYou().setAngleMovement(command);
+            else if (gameCanvas.getGameState() == 0){
+                if (command.equals("startGame")){
+                    gameCanvas.pressStart();
+                }
             }
-            // else{
-            //     gameCanvas.getYou().setMovement(command);
-            // }
+            else if (gameCanvas.getGameState() == 2){
+                if (command.equals("restartGame")){
+                    gameCanvas.pressRestart();
+                }
+            }
         }
     }
 

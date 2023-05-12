@@ -7,15 +7,19 @@ public class Constants {
     public static final String P2SPRITE = "assets/bee-blue.png";
     public static final String P2SPRITE2 = "assets/bee-blue-flap.png";
     public static final String BGSPRITE = "assets/background.png";
+    public static final String STARTMENUBG = "assets/startmenubg.png";
+    public static final String STARTMENUWAIT = "assets/startmenuwait.png";
     public static final String TIMEHEXAGON = "assets/timeindicator.png";
     public static final String TIMEHEXAGONGLOW = "assets/timeindicator-glow.png";
     public static final String HONEY = "assets/honey.png";
+    public static final String YOUWIN = "assets/youwin.png";
+    public static final String YOULOSE = "assets/youlose.png";
 
     public static final int NORMALSPEED = 3; // 3
     public static final int MAXSPEED = 30; // 30
     public static final int SPEEDINCREMENT = 1;
     public static final double RAD90 = 1.57; // 1.570796327
-    public static final double ANGLESENS = 0.2;
+    public static final double ANGLESENS = 0.25;
     public static final double NEEDLEDIST = 26;
     public static final double BODYRADIUS = 20;
 
@@ -29,4 +33,6 @@ public class Constants {
     public static final int FONTSZ = 42;
 
     public static final int WINSCORE = 9;
+    public static final int HONEYRAD = 23;
+    public static final int GOTHONEYDURATION = 80;
 }

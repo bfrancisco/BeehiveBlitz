@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class GameCanvas extends JComponent{
     private int width, height;
-    
+    private int gameState; // 0 - home screen, 1 - game proper, 2 - you win/lose
     private Player you;
     private Player enemy;
     private Honey honey;
@@ -19,9 +19,14 @@ public class GameCanvas extends JComponent{
 
     private int yourID;
 
+    private BufferedImage startMenuBG;
+    private BufferedImage startMenuWait;
+    private int menuCounter; // 0-menu bg, 1-menu waiting, 2-you win/lose
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
     private BufferedImage timeHexagonGlow;
+    private BufferedImage youWinOverlay;
+    private BufferedImage youLoseOverlay;
     private Font font, fontOffset;
     private Color blue, orange;
 
@@ -32,55 +37,107 @@ public class GameCanvas extends JComponent{
     public GameCanvas(int w, int h){
         width = w;
         height = h;
+        gameState = 0;
         this.setPreferredSize(new Dimension(width, height));
         
+    }
+
+    public int getGameState(){
+        return gameState;
+    }
+
+    public void setGameState(int g){
+        gameState = g;
+        if (g == 2){
+            menuCounter = 2;
+        }
     }
 
     public void setPlayerID(int i){
         yourID = i;
     }
 
+    public void pressStart(){
+        menuCounter = 1;
+    }
+
+    public void pressRestart(){
+        menuCounter = 0;
+        gameState = 0;
+        you.setInitialStats();
+        enemy.setInitialStats();
+    }
+
+    public int getCanvasState(){
+        return menuCounter;
+    }
+
     public void setUpSprites(){
         if (yourID == 1){
-            you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
-            enemy = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            you = new Player(width/2 - width/4, height/2, Constants.P1SPRITE, Constants.P1SPRITE2);
+            enemy = new Player(width/2 + width/4, height/2, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
         else if (yourID == 2){
-            enemy = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
-            you = new Player(width/2 + width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P2SPRITE, Constants.P2SPRITE2);
+            enemy = new Player(width/2 - width/4, height/2, Constants.P1SPRITE, Constants.P1SPRITE2);
+            you = new Player(width/2 + width/4, height/2, Constants.P2SPRITE, Constants.P2SPRITE2);
         }
         honey = new Honey(-1, -1);
         font = new Font(Constants.FONTNAME, Font.PLAIN, Constants.FONTSZ);
         orange = Color.decode("#F4A134");
         blue = Color.decode("#52A4A8");
         try{
+            startMenuBG = ImageIO.read(new File(Constants.STARTMENUBG));
+            startMenuWait = ImageIO.read(new File(Constants.STARTMENUWAIT));
+            menuCounter = 0;
             bgImage = ImageIO.read(new File(Constants.BGSPRITE));
             timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
             timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
+            youWinOverlay = ImageIO.read(new File(Constants.YOUWIN));
+            youLoseOverlay = ImageIO.read(new File(Constants.YOULOSE));
         }catch (IOException e){
             e.printStackTrace();
         }
 
     }
 
-    public void drawBG( Graphics2D g2d, AffineTransform af){
+    public void drawStartMenu(Graphics2D g2d, AffineTransform af){
+        if (menuCounter == 0)
+            g2d.drawImage(startMenuBG, 0, 0, null);
+        else if (menuCounter == 1)
+            g2d.drawImage(startMenuWait, 0, 0, null);
+        
+    }
+
+    public void drawResult(Graphics2D g2d, AffineTransform af){
+        if (gameState == 2){
+            if (you.getScore() == Constants.WINSCORE)
+                g2d.drawImage(youWinOverlay, 0, 0, null);
+            else
+                g2d.drawImage(youLoseOverlay, 0, 0, null);
+        }
+        
+    }
+
+    public void drawBG(Graphics2D g2d, AffineTransform af){
         g2d.drawImage(bgImage, 0, 0, null);
         
-        // draw timer indicators
         int midX = width/2;
-        for (int i = 100; i <= dashTimer; i += 100){
-            if (dashTimer < 300){
-                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
-                g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
-            }
-            else if (300 <= dashTimer && dashTimer <= 400){
-                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
-                g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+
+        // draw timer indicators
+        if (gameState == 1){
+            for (int i = 100; i <= dashTimer; i += 100){
+                if (dashTimer < 300){
+                    g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                    g2d.drawImage(timeHexagon, (midX - (timeHexagon.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagon.getHeight()/2), null);
+                }
+                else if (300 <= dashTimer && dashTimer <= 400){
+                    g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) - (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                    g2d.drawImage(timeHexagonGlow, (midX - (timeHexagonGlow.getWidth()/2)) + (73 * (2-(i/100)+1)), 75 - (timeHexagonGlow.getHeight()/2), null);
+                }
             }
         }
         
         // draw score
-        // System.out.println(you.getScore() + " | " + enemy.getScore());
         String youScoreStr = Integer.toString(you.getScore());
         String enemyScoreStr = Integer.toString(enemy.getScore());
         FontMetrics metrics = g2d.getFontMetrics();
@@ -126,11 +183,17 @@ public class GameCanvas extends JComponent{
         g2d.fillRect(0, 0, width, height);
 
         // draw game elements
-        drawBG(g2d, af);
-        honey.draw(g2d, af);
-        enemy.draw(g2d, af);
-        you.draw(g2d, af);
-        
+        if (gameState == 0){
+            drawStartMenu(g2d, af);
+        }
+        else if (gameState > 0){
+            drawBG(g2d, af);
+            honey.draw(g2d, af);
+            enemy.draw(g2d, af);
+            you.draw(g2d, af);
+            drawResult(g2d, af);
+        }
+            
         enemyExists = true;
         
     }
@@ -157,9 +220,11 @@ public class GameCanvas extends JComponent{
         new java.util.Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                you.moveAngle();
-                you.move();
-                handleBorderCollision();
+                if (gameState > 0){
+                    you.moveAngle();
+                    you.move();
+                    handleBorderCollision();
+                }
                 gameRender();
                 paintScreen();
             }}, 0, 30);

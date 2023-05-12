@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
-
+    private double initialX, initialY;
     private BufferedImage sprite, sprite_flap;
     private int speed;
     private double angle, angleSensitivity; // in radians
@@ -17,45 +17,35 @@ public class Player extends ObjectProperties {
     private int speedIncrement;
     private boolean isSpeedingUp;
     private boolean isInvincible;
+    private boolean justGotHoney;
     private int inviCounter; // 80
     private int animCounter; // 1000
+    private int honeyCounter; // 80;
     private double needleX, needleY;
     private AlphaComposite hitAlpha;
     private AlphaComposite normalAlpha;
     private int score;
 
-    public Player(double x, double y, int s, int si, int ms, String spritefile, String spritefileflap){
+    public Player(double x, double y, String spritefile, String spritefileflap){
         super(x, y);
+        initialX = x;
+        initialY = y;
         try{
             sprite = ImageIO.read(new File(spritefile));
             sprite_flap = ImageIO.read(new File(spritefileflap));
         }catch (IOException e){
             e.printStackTrace();
         }
-        
         setWidth(sprite.getWidth());
         setHeight(sprite.getHeight());
-        speed = s;
-        angle = Constants.RAD90;
-        angleSensitivity = Constants.ANGLESENS;
-        angleMovement = 0;
-        toMove = false;
-        minSpeed = s;
-        maxSpeed = ms;
-        speedIncrement = si;
-        isSpeedingUp = false;
-        isInvincible = false;
-        inviCounter = 0;
-        animCounter = 0;
-        score = 0;
-        setNeedlePoint();
+        setInitialStats();
         hitAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Constants.INVIALPHA);
         normalAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
     }
 
     public void draw(Graphics2D g2d, AffineTransform reset){
         // System.out.println(posX + " " + posY);
-        // g2d.fillOval((int)(needleX-Constants.BODYRADIUS), (int)(needleY-Constants.BODYRADIUS), (int)Constants.BODYRADIUS*2, (int)Constants.BODYRADIUS*2);
+        // g2d.drawOval((int)(needleX-Constants.BODYRADIUS), (int)(needleY-Constants.BODYRADIUS), (int)Constants.BODYRADIUS*2, (int)Constants.BODYRADIUS*2);
         
         g2d.rotate(angle, posX, posY);
         g2d.translate(posX - sprite.getWidth(null)/2, posY - sprite.getHeight(null)/2);
@@ -80,6 +70,12 @@ public class Player extends ObjectProperties {
             inviCounter -= 1;
         else if (inviCounter == 0)
             resetInviCounter();
+
+        if (honeyCounter > 0)
+            honeyCounter -= 1;
+        else if (honeyCounter == 0)
+            resetHoneyCounter();
+
 
         animCounter = (animCounter + speed) % 1000;
         
@@ -166,9 +162,45 @@ public class Player extends ObjectProperties {
 
     public void addScore(int v){
         score += v;
+        if (score < 0) score = 0;
     }
 
     public int getScore(){
         return score;
+    }
+
+    public void gotHoney(){
+        justGotHoney = true;
+        honeyCounter = Constants.GOTHONEYDURATION;
+    }
+
+    public void resetHoneyCounter(){
+        honeyCounter = 0;
+        justGotHoney = false;
+    }
+
+    public boolean justGotHoney(){
+        return justGotHoney;
+    }
+
+    public void setInitialStats(){
+        posX = initialX;
+        posY = initialY;
+        speed = Constants.NORMALSPEED;
+        angle = Constants.RAD90;
+        angleSensitivity = Constants.ANGLESENS;
+        angleMovement = 0;
+        toMove = false;
+        minSpeed = Constants.NORMALSPEED;
+        maxSpeed = Constants.MAXSPEED;
+        speedIncrement = Constants.SPEEDINCREMENT;
+        isSpeedingUp = false;
+        isInvincible = false;
+        justGotHoney = false;
+        inviCounter = 0;
+        animCounter = 0;
+        honeyCounter = 0;
+        score = 0;
+        setNeedlePoint();
     }
 }

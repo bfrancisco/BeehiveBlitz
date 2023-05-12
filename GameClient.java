@@ -25,7 +25,9 @@ public class GameClient{
             System.out.print("Insert IP Address: ");
             String ipAddress = scan.nextLine();
             System.out.print("Port: ");
-            int portNumber= Integer.parseInt(scan.nextLine());
+            int portNumber = Integer.parseInt(scan.nextLine());
+            // String ipAddress = "localhost";
+            // int portNumber = 24396;
             socket = new Socket(ipAddress, portNumber);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -51,11 +53,14 @@ public class GameClient{
         public void run(){
             try{
                 while (true){
+                    int serverGameState = dataIn.readInt();
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
                     int gotPunctured = dataIn.readInt();
                     int enemyPunctured = dataIn.readInt();
+                    int gotHoney = dataIn.readInt();
+                    int enemyHoney = dataIn.readInt();
                     int dashTimer = dataIn.readInt();
                     int hx = dataIn.readInt();
                     int hy = dataIn.readInt();
@@ -63,6 +68,15 @@ public class GameClient{
 
                     if (!canvas.doesEnemyExists()) continue;
 
+                    if (canvas.getGameState() == 0 && serverGameState == 1){
+                        canvas.setGameState(1);
+                    }
+                    else if (canvas.getGameState() == 1 && serverGameState == 2){
+                        canvas.setGameState(2);
+                    }
+                    else if (canvas.getGameState() == 2 && serverGameState == 0){
+                        canvas.pressRestart();
+                    }
                     canvas.setDashTimer(dashTimer);
                     canvas.getEnemy().setX(ex);
                     canvas.getEnemy().setY(ey);
@@ -71,22 +85,36 @@ public class GameClient{
                     canvas.getHoney().setX(hx);
                     canvas.getHoney().setY(hy);
                     
+                    if (canvas.getGameState() == 1){
+                        if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
+                            canvas.getYou().bodyPunctured();
+                            canvas.getEnemy().addScore(1);
+                            canvas.getYou().addScore(-1);
+                            // System.out.println("gotpuncutred");
+                        }
+                        if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
+                            canvas.getEnemy().bodyPunctured();
+                            canvas.getYou().addScore(1);
+                            canvas.getEnemy().addScore(-1);
+                            // System.out.println("enemyPunctured");
+                        }
+    
+                        if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
+                            canvas.getYou().addScore(1);
+                            canvas.getYou().gotHoney();
+                        }
+                        if (enemyHoney == 1 && !canvas.getEnemy().justGotHoney()){
+                            canvas.getEnemy().addScore(1);
+                            canvas.getEnemy().gotHoney();
+                        }
 
-                    if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
-                        canvas.getYou().bodyPunctured();
-                        canvas.getEnemy().addScore(1);
-                        // System.out.println("gotpuncutred");
+                        if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
+                            canvas.getYou().toggleDash();
+                            canvas.getEnemy().toggleDash();
+                        }
                     }
-                    if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
-                        canvas.getEnemy().bodyPunctured();
-                        canvas.getYou().addScore(1);
-                        // System.out.println("enemyPunctured");
-                    }
-                        
-                    if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
-                        canvas.getYou().toggleDash();
-                        canvas.getEnemy().toggleDash();
-                    }
+                    
+                    
         
                 }
             }catch (IOException ex){
@@ -124,6 +152,7 @@ public class GameClient{
                 while (true){
 
                     if (canvas.doesEnemyExists()){
+                        dataOut.writeInt(canvas.getCanvasState());
                         dataOut.writeDouble(canvas.getYou().getX());
                         dataOut.writeDouble(canvas.getYou().getY());
                         dataOut.writeDouble(canvas.getYou().getAngle());
