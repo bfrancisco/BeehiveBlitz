@@ -19,6 +19,7 @@ public class GameServer{
     private WriteToClient p1writeRunnable;
     private WriteToClient p2writeRunnable;
 
+    private int p1gs, p2gs, serverGameState; // game state
     // player coordinates, angle, and needle coordinates
     private double p1x, p1y, p2x, p2y, p1a, p2a, p1nx, p1ny, p2nx, p2ny;
     private boolean isDashing;
@@ -29,7 +30,7 @@ public class GameServer{
     int p1GetsH, p2GetsH;
 
     public GameServer(){
-        setInitialGameState();
+        setInitialGameStats();
         numPlayers = 0;
         maxPlayers = 2;
         System.out.println("server is running");
@@ -43,7 +44,8 @@ public class GameServer{
         }
     }
 
-    public void setInitialGameState(){
+    public void setInitialGameStats(){
+        p1gs = p2gs = serverGameState = 0;
         p1x = 150;
         p1y = p2y = 200;
         p2x = 450;
@@ -138,7 +140,9 @@ public class GameServer{
         public void run(){
             try{
                 while (true){
+                    
                     if (playerID == 1) {
+                        p1gs = dataIn.readInt();
                         p1x = dataIn.readDouble();
                         p1y = dataIn.readDouble();
                         p1a = dataIn.readDouble();
@@ -147,13 +151,18 @@ public class GameServer{
                         p1s = dataIn.readInt();
                     }
                     else if (playerID == 2) {
+                        p2gs = dataIn.readInt();
                         p2x = dataIn.readDouble();
                         p2y = dataIn.readDouble();
                         p2a = dataIn.readDouble();
                         p2nx = p2x - Math.round(Math.cos(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2ny = p2y - Math.round(Math.sin(p2a)*Constants.NEEDLEDIST * 100) / 100;
                         p2s = dataIn.readInt();
-                    } 
+                    }
+                    if (serverGameState == 0 && p1gs == 1 && p2gs == 1){
+                        setInitialGameStats();
+                        serverGameState = 1;
+                    }
 
                 }
             }catch (IOException ex){
@@ -181,7 +190,7 @@ public class GameServer{
             try{
                 while(true){
                     p1Hitsp2 = p2Hitsp1 = p1GetsH = p2GetsH = 0;                 
-
+                    
                     // Check bee collision
                     if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
                         p2Hitsp1 = 1;
@@ -200,6 +209,7 @@ public class GameServer{
                             p2GetsH = 1;
                     }
 
+                    dataOut.writeInt(serverGameState);
                     if (playerID == 1){
                         dataOut.writeDouble(p2x);
                         dataOut.writeDouble(p2y);

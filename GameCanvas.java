@@ -20,6 +20,8 @@ public class GameCanvas extends JComponent{
     private int yourID;
 
     private BufferedImage startMenuBG;
+    private BufferedImage startMenuWait;
+    private int startMenuCounter;
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
     private BufferedImage timeHexagonGlow;
@@ -50,6 +52,14 @@ public class GameCanvas extends JComponent{
         yourID = i;
     }
 
+    public void pressStart(){
+        startMenuCounter = 1;
+    }
+
+    public int getCanvasState(){
+        return startMenuCounter;
+    }
+
     public void setUpSprites(){
         if (yourID == 1){
             you = new Player(width/2 - width/4, height/2, Constants.NORMALSPEED, Constants.SPEEDINCREMENT, Constants.MAXSPEED, Constants.P1SPRITE, Constants.P1SPRITE2);
@@ -65,6 +75,8 @@ public class GameCanvas extends JComponent{
         blue = Color.decode("#52A4A8");
         try{
             startMenuBG = ImageIO.read(new File(Constants.STARTMENUBG));
+            startMenuWait = ImageIO.read(new File(Constants.STARTMENUWAIT));
+            startMenuCounter = 0;
             bgImage = ImageIO.read(new File(Constants.BGSPRITE));
             timeHexagon = ImageIO.read(new File(Constants.TIMEHEXAGON));
             timeHexagonGlow = ImageIO.read(new File(Constants.TIMEHEXAGONGLOW));
@@ -75,7 +87,11 @@ public class GameCanvas extends JComponent{
     }
 
     public void drawStartMenu(Graphics2D g2d, AffineTransform af){
-        g2d.drawImage(startMenuBG, 0, 0, null);
+        if (startMenuCounter == 0)
+            g2d.drawImage(startMenuBG, 0, 0, null);
+        else
+            g2d.drawImage(startMenuWait, 0, 0, null);
+        
     }
 
     public void drawBG(Graphics2D g2d, AffineTransform af){

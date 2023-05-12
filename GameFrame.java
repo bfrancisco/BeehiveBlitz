@@ -77,7 +77,7 @@ public class GameFrame{
             else if (gameCanvas.getGameState() == 0){
                 if (command.equals("startGame")){
                     System.out.println("Game started");
-                    gameCanvas.setGameState(1);
+                    gameCanvas.pressStart();
                 }
             }
         }

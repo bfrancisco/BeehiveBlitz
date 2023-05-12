@@ -8,6 +8,7 @@ public class Constants {
     public static final String P2SPRITE2 = "assets/bee-blue-flap.png";
     public static final String BGSPRITE = "assets/background.png";
     public static final String STARTMENUBG = "assets/startmenubg.png";
+    public static final String STARTMENUWAIT = "assets/startmenuwait.png";
     public static final String TIMEHEXAGON = "assets/timeindicator.png";
     public static final String TIMEHEXAGONGLOW = "assets/timeindicator-glow.png";
     public static final String HONEY = "assets/honey.png";
@@ -16,7 +17,7 @@ public class Constants {
     public static final int MAXSPEED = 30; // 30
     public static final int SPEEDINCREMENT = 1;
     public static final double RAD90 = 1.57; // 1.570796327
-    public static final double ANGLESENS = 0.3;
+    public static final double ANGLESENS = 0.25;
     public static final double NEEDLEDIST = 26;
     public static final double BODYRADIUS = 20;
 

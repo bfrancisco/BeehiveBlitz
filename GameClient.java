@@ -53,6 +53,7 @@ public class GameClient{
         public void run(){
             try{
                 while (true){
+                    int serverGameState = dataIn.readInt();
                     double ex = dataIn.readDouble();
                     double ey = dataIn.readDouble();
                     double eA = dataIn.readDouble();
@@ -67,6 +68,9 @@ public class GameClient{
 
                     if (!canvas.doesEnemyExists()) continue;
 
+                    if (serverGameState == 1){
+                        canvas.setGameState(1);
+                    }
                     canvas.setDashTimer(dashTimer);
                     canvas.getEnemy().setX(ex);
                     canvas.getEnemy().setY(ey);
@@ -140,6 +144,7 @@ public class GameClient{
                 while (true){
 
                     if (canvas.doesEnemyExists()){
+                        dataOut.writeInt(canvas.getCanvasState());
                         dataOut.writeDouble(canvas.getYou().getX());
                         dataOut.writeDouble(canvas.getYou().getY());
                         dataOut.writeDouble(canvas.getYou().getAngle());
