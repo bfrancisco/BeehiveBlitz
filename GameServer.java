@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import javax.swing.Timer;
 import java.awt.event.*;
-// import java.util.Random;
+import java.util.Random;
 
 public class GameServer{
     
@@ -25,21 +25,14 @@ public class GameServer{
     private int dashTimer;
     private int p1s, p2s;
     private int hx, hy;
-    private boolean spawnHoney;
-    private boolean gotHoney;
+    int p1Hitsp2, p2Hitsp1;
+    int p1GetsH, p2GetsH;
 
     public GameServer(){
-        p1x = 150;
-        p1y = p2y = 200;
-        p2x = 450;
-        p1a = p2a = -1.570796327;
-        isDashing = false;
-        dashTimer = 0;
-        hx = hy = -1;
-        spawnHoney = false;
-        System.out.println("server is running");
+        setInitialGameState();
         numPlayers = 0;
         maxPlayers = 2;
+        System.out.println("server is running");
         try{
             System.out.println("socket not yet created");
             ss = new ServerSocket(24396);
@@ -48,6 +41,17 @@ public class GameServer{
         catch (IOException ex){
              System.out.println("IOException from GameServer Constructor");
         }
+    }
+
+    public void setInitialGameState(){
+        p1x = 150;
+        p1y = p2y = 200;
+        p2x = 450;
+        p1a = p2a = -1.570796327;
+        isDashing = false;
+        dashTimer = 0;
+        hx = hy = -1;
+        
     }
 
     public void acceptConnections(){
@@ -99,15 +103,17 @@ public class GameServer{
     }
 
     private class TimerIncrement implements Runnable{
+        Random rand = new Random();
         public void run(){
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
-                    // System.out.println(p1s + " | " + p2s);
                     dashTimer = 1;
+                    hx = hy = -1;
                 }
-                if (dashTimer == Constants.DASHLIMIT/2){
-                    spawnHoney = true;
+                else if (dashTimer == Constants.DASHLIMIT/2){
+                    hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
+                    hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
                 }
                 try{
                     Thread.sleep(10);
@@ -160,7 +166,6 @@ public class GameServer{
 
         private int playerID;
         private DataOutputStream dataOut;
-        // Random rand = new Random();
 
         public WriteToClient(int pid, DataOutputStream out){
             playerID = pid;
@@ -175,8 +180,9 @@ public class GameServer{
         public void run(){
             try{
                 while(true){
-                    int p1Hitsp2, p2Hitsp1;
-                    p1Hitsp2 = p2Hitsp1 = 0;
+                    p1Hitsp2 = p2Hitsp1 = p1GetsH = p2GetsH = 0;                 
+
+                    // Check bee collision
                     if (getDistance(p1x, p1y, p2nx, p2ny) <= Constants.BODYRADIUS){
                         p2Hitsp1 = 1;
                     }
@@ -184,12 +190,14 @@ public class GameServer{
                         p1Hitsp2 = 1;
                     }
 
-                    if (spawnHoney){
-                        // hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
-                        // hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
-                        hx = hy = 250;
-                        // System.out.println(hx + " | " + hy);
-                        spawnHoney = false;
+                    // Check honey collision
+                    double p1toH = getDistance(p1x, p1y, (double)hx, (double)hy);
+                    double p2toH = getDistance(p2x, p2y, (double)hx, (double)hy);
+                    if (Math.min(p1toH, p2toH) <= Constants.HONEYRAD){
+                        if (p1toH <= p2toH)
+                            p1GetsH = 1;
+                        else
+                            p2GetsH = 1;
                     }
 
                     if (playerID == 1){
@@ -200,7 +208,10 @@ public class GameServer{
                         dataOut.writeInt(p2Hitsp1);
                         // if i punctured the enemy
                         dataOut.writeInt(p1Hitsp2);
-                        
+                        // if i got honey
+                        dataOut.writeInt(p1GetsH);
+                        // if enemy got honey
+                        dataOut.writeInt(p2GetsH);
                     }
                     else if (playerID == 2){
                         dataOut.writeDouble(p1x);
@@ -210,6 +221,10 @@ public class GameServer{
                         dataOut.writeInt(p1Hitsp2);
                         // if i punctured the enemy
                         dataOut.writeInt(p2Hitsp1);
+                        // if i got honey
+                        dataOut.writeInt(p2GetsH);
+                        // if enemy got honey
+                        dataOut.writeInt(p1GetsH);
 
                     }
                     dataOut.writeInt(dashTimer);

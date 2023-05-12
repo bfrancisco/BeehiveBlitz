@@ -22,10 +22,12 @@ public class GameClient{
         System.out.println("Client");
         try{
             Scanner scan = new Scanner(System.in);
-            System.out.print("Insert IP Address: ");
-            String ipAddress = scan.nextLine();
-            System.out.print("Port: ");
-            int portNumber= Integer.parseInt(scan.nextLine());
+            // System.out.print("Insert IP Address: ");
+            // String ipAddress = scan.nextLine();
+            String ipAddress = "localhost";
+            // System.out.print("Port: ");
+            // int portNumber = Integer.parseInt(scan.nextLine());
+            int portNumber = 24396;
             socket = new Socket(ipAddress, portNumber);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
@@ -56,6 +58,8 @@ public class GameClient{
                     double eA = dataIn.readDouble();
                     int gotPunctured = dataIn.readInt();
                     int enemyPunctured = dataIn.readInt();
+                    int gotHoney = dataIn.readInt();
+                    int enemyHoney = dataIn.readInt();
                     int dashTimer = dataIn.readInt();
                     int hx = dataIn.readInt();
                     int hy = dataIn.readInt();
@@ -75,17 +79,29 @@ public class GameClient{
                     if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
                         canvas.getYou().bodyPunctured();
                         canvas.getEnemy().addScore(1);
+                        canvas.getYou().addScore(-1);
                         // System.out.println("gotpuncutred");
                     }
                     if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
                         canvas.getEnemy().bodyPunctured();
                         canvas.getYou().addScore(1);
+                        canvas.getEnemy().addScore(-1);
                         // System.out.println("enemyPunctured");
                     }
-                        
+
+                    if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
+                        canvas.getYou().addScore(1);
+                        canvas.getYou().gotHoney();
+                    }
+                    if (enemyHoney == 1 && !canvas.getEnemy().justGotHoney()){
+                        canvas.getEnemy().addScore(1);
+                        canvas.getEnemy().gotHoney();
+                    }
+                    
                     if (Math.abs(dashTimer - Constants.DASHTRIGGER) < 7){
                         canvas.getYou().toggleDash();
                         canvas.getEnemy().toggleDash();
+                        // System.out.println(canvas.getYou().getScore() + " | " + canvas.getEnemy().getScore());
                     }
         
                 }

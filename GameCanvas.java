@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 
 public class GameCanvas extends JComponent{
     private int width, height;
-    
+    private int gameState; // 0 - home screen, 1 - game proper, 2 - you win/lose
     private Player you;
     private Player enemy;
     private Honey honey;
@@ -32,8 +32,13 @@ public class GameCanvas extends JComponent{
     public GameCanvas(int w, int h){
         width = w;
         height = h;
+        gameState = 0;
         this.setPreferredSize(new Dimension(width, height));
         
+    }
+
+    public void setGameState(int g){
+        gameState = g;
     }
 
     public void setPlayerID(int i){

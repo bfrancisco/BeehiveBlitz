@@ -17,8 +17,10 @@ public class Player extends ObjectProperties {
     private int speedIncrement;
     private boolean isSpeedingUp;
     private boolean isInvincible;
+    private boolean justGotHoney;
     private int inviCounter; // 80
     private int animCounter; // 1000
+    private int honeyCounter; // 80;
     private double needleX, needleY;
     private AlphaComposite hitAlpha;
     private AlphaComposite normalAlpha;
@@ -45,8 +47,10 @@ public class Player extends ObjectProperties {
         speedIncrement = si;
         isSpeedingUp = false;
         isInvincible = false;
+        justGotHoney = false;
         inviCounter = 0;
         animCounter = 0;
+        honeyCounter = 0;
         score = 0;
         setNeedlePoint();
         hitAlpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Constants.INVIALPHA);
@@ -80,6 +84,12 @@ public class Player extends ObjectProperties {
             inviCounter -= 1;
         else if (inviCounter == 0)
             resetInviCounter();
+
+        if (honeyCounter > 0)
+            honeyCounter -= 1;
+        else if (honeyCounter == 0)
+            resetHoneyCounter();
+
 
         animCounter = (animCounter + speed) % 1000;
         
@@ -166,9 +176,24 @@ public class Player extends ObjectProperties {
 
     public void addScore(int v){
         score += v;
+        if (score < 0) score = 0;
     }
 
     public int getScore(){
         return score;
+    }
+
+    public void gotHoney(){
+        justGotHoney = true;
+        honeyCounter = Constants.GOTHONEYDURATION;
+    }
+
+    public void resetHoneyCounter(){
+        honeyCounter = 0;
+        justGotHoney = false;
+    }
+
+    public boolean justGotHoney(){
+        return justGotHoney;
     }
 }

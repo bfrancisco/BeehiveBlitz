@@ -44,8 +44,6 @@ public class GameFrame{
 
         am.put("print", new MoveAction("print"));
 
-        am.put("move", new MoveAction("move"));
-        am.put("stopMove", new MoveAction("stopMove"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "cw");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "ccw");
@@ -53,9 +51,6 @@ public class GameFrame{
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "stop");
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, 0, false), "print");
-
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "move");
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true), "stopMove");
         
     }
 
@@ -76,9 +71,6 @@ public class GameFrame{
             else if (!command.equals("move") && !command.equals("stopMove")){
                 gameCanvas.getYou().setAngleMovement(command);
             }
-            // else{
-            //     gameCanvas.getYou().setMovement(command);
-            // }
         }
     }
 

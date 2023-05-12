@@ -15,7 +15,7 @@ public class Constants {
     public static final int MAXSPEED = 30; // 30
     public static final int SPEEDINCREMENT = 1;
     public static final double RAD90 = 1.57; // 1.570796327
-    public static final double ANGLESENS = 0.2;
+    public static final double ANGLESENS = 0.3;
     public static final double NEEDLEDIST = 26;
     public static final double BODYRADIUS = 20;
 
@@ -29,4 +29,6 @@ public class Constants {
     public static final int FONTSZ = 42;
 
     public static final int WINSCORE = 9;
+    public static final int HONEYRAD = 23;
+    public static final int GOTHONEYDURATION = 80;
 }
