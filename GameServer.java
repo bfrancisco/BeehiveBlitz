@@ -36,7 +36,7 @@ public class GameServer{
         System.out.println("server is running");
         try{
             System.out.println("socket not yet created");
-            ss = new ServerSocket(55555);
+            ss = new ServerSocket(24396);
             System.out.println("socket created");
         }
         catch (IOException ex){
