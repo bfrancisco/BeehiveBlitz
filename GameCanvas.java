@@ -23,10 +23,8 @@
 import javax.swing.*;
 import java.awt.geom.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.io.*;
-import java.net.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -242,14 +240,12 @@ public class GameCanvas extends JComponent{
             if ((g2d != null) && (dbImage != null)){
                 g2d.drawImage(dbImage, 0, 0, null);
             }
-            Toolkit.getDefaultToolkit().sync(); // spaghetti, something related to compatibility across all platforms
-            g2d.dispose(); // spaghetti
+            Toolkit.getDefaultToolkit().sync();
+            g2d.dispose();
         }
         catch (Exception e){
             System.out.println("Graphics context error: " + e);
         }
-
-        // System.out.println(you.getScore() + " | " + enemy.getScore());
     }
 
     // Timer to constantly update the frames every 30 milliseconds.

@@ -62,7 +62,7 @@ public class GameClient{
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt();
-            System.out.println("Connected as p#" + playerID);
+            System.out.println("Connected as Player #" + playerID);
             rfsRunnable = new ReadFromServer(in);
             wtsRunnable = new WriteToServer(out);
             rfsRunnable.waitForStartMsg();
@@ -122,25 +122,22 @@ public class GameClient{
                     canvas.getEnemy().setX(ex);
                     canvas.getEnemy().setY(ey);
                     canvas.getEnemy().setAngle(eA);
-                    canvas.getEnemy().setNeedlePoint();
                     canvas.getHoney().setX(hx);
                     canvas.getHoney().setY(hy);
                     
-                    // if GameState is 1, then 
+                    // if GameState is 1, then game is being played.
                     if (canvas.getGameState() == 1){
                         if (gotPunctured == 1 && !canvas.getYou().isInvincible()){
                             canvas.getYou().bodyPunctured();
                             canvas.getEnemy().addScore(1);
                             canvas.getYou().addScore(-1);
                             canvas.getYou().playHitSound();
-                            // System.out.println("gotpuncutred");
                         }
                         if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
                             canvas.getEnemy().bodyPunctured();
                             canvas.getYou().addScore(1);
                             canvas.getEnemy().addScore(-1);
                             canvas.getEnemy().getPointSound();
-                            // System.out.println("enemyPunctured");
                         }
     
                         if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
@@ -176,7 +173,7 @@ public class GameClient{
                 writeThread.start();
                 
             }catch (IOException ex){
-                System.out.println("IOException for wait for start");
+                System.out.println("IOException from wait for start");
             }
         }
     }
@@ -245,7 +242,7 @@ public class GameClient{
                     try{
                         Thread.sleep(10);
                     }catch (InterruptedException ex){
-                        System.out.println("InterruptedException fr wts run");
+                        System.out.println("InterruptedException from wts run");
                     }
                 }
             } catch (IOException ex){

@@ -39,8 +39,6 @@ public class GameFrame{
         gameClient = new GameClient();
         gameClient.setGameCanvas(gameCanvas);
     }
-
-
     
     // This class contains all the codes for setting up the JFrame, key bindings, and a function to accept server connection.
     // This class is instantiated on the GameStarter class. 
