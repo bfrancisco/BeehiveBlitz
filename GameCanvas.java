@@ -18,7 +18,7 @@
 /*
     This class contains all the codes for the GameCanvas, or the JComponent of the program.
     This includes all the necessary functions for drawing the graphics of the game, and instances of the Player and Honey class.
- */
+*/
 
 import javax.swing.*;
 import java.awt.geom.*;
@@ -294,7 +294,7 @@ public class GameCanvas extends JComponent{
     }
 
     // Getter methods; used in GameClient.
-    
+
     public Player getYou(){
         return you;
     }

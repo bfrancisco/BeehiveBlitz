@@ -19,7 +19,7 @@
     This class contains all the constant values used across all other classes.
     These constants include file paths, properties of players, timer counters, etc.
     This class is made to reduce redundancy and easy access to values used throughout the program.
- */
+*/
 
 public class Constants {
     public static final int FRAMEWIDTH = 960;
