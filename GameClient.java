@@ -151,7 +151,7 @@ public class GameClient{
         public boolean isPlaying = false;
         public void playBGM(){
             try{
-                File file = new File("assets/bgm.wav");
+                File file = new File(Constants.BGMUSIC);
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
                 clip = AudioSystem.getClip();
                 clip.open(audioStream);

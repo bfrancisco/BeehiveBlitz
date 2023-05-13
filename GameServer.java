@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import javax.swing.Timer;
 import java.awt.event.*;
-import java.util.Random;
 
 public class GameServer{
     
@@ -105,8 +104,9 @@ public class GameServer{
     }
 
     private class TimerIncrement implements Runnable{
-        Random rand = new Random();
         public void run(){
+        RandomNumber rn1 = new RandomNumber(100, Constants.FRAMEWIDTH-100);
+        RandomNumber rn2 = new RandomNumber(100, Constants.FRAMEHEIGHT-100);
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
@@ -114,8 +114,8 @@ public class GameServer{
                     hx = hy = -1;
                 }
                 else if (dashTimer == Constants.DASHLIMIT/2){
-                    hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
-                    hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                    hx = rn1.randomInt(p1x%1, p1y%1, p2x%1, p2y%1);
+                    hy = rn2.randomInt(p1x%1, p1y%1, p2x%1, p2y%1);
                 }
                 try{
                     Thread.sleep(10);

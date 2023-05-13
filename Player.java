@@ -187,7 +187,7 @@ public class Player extends ObjectProperties {
     }
     public void playHitSound(){
         try{
-            File file = new File("assets/getDamaged.wav");
+            File file = new File(Constants.HITSOUND);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
 		    Clip clip = AudioSystem.getClip();
 		    clip.open(audioStream);
@@ -199,7 +199,7 @@ public class Player extends ObjectProperties {
     }
     public void getPointSound(){
         try{
-            File file = new File("assets/honeyGet.wav");
+            File file = new File(Constants.SCORESOUND);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
 		    Clip clip = AudioSystem.getClip();
 		    clip.open(audioStream);
