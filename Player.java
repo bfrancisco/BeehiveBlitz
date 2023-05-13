@@ -3,6 +3,9 @@ import java.awt.geom.*;
 import java.io.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.io.File;
 
 public class Player extends ObjectProperties {
     // (posX, posY) is the center of the player.
@@ -182,7 +185,30 @@ public class Player extends ObjectProperties {
     public boolean justGotHoney(){
         return justGotHoney;
     }
-
+    public void playHitSound(){
+        try{
+            File file = new File("assets/getDamaged.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+		    Clip clip = AudioSystem.getClip();
+		    clip.open(audioStream);
+            clip.start();
+         }
+        catch(Exception e){
+            System.out.println("e");
+        }
+    }
+    public void getPointSound(){
+        try{
+            File file = new File("assets/honeyGet.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+		    Clip clip = AudioSystem.getClip();
+		    clip.open(audioStream);
+            clip.start();
+         }
+        catch(Exception e){
+            System.out.println("e");
+        }
+    }
     public void setInitialStats(){
         posX = initialX;
         posY = initialY;

@@ -50,7 +50,7 @@ public class GameCanvas extends JComponent{
         gameState = g;
         if (g == 2){
             menuCounter = 2;
-        }
+        }   
     }
 
     public void setPlayerID(int i){
