@@ -37,6 +37,9 @@ public class Constants {
     public static final String HONEY = "assets/honey.png";
     public static final String YOUWIN = "assets/youwin.png";
     public static final String YOULOSE = "assets/youlose.png";
+    public static final String BGMUSIC = "assets/bgm.wav";
+    public static final String SCORESOUND= "assets/getPoint.wav";
+    public static final String HITSOUND = "assets/getDamaged.wav";
 
     public static final int NORMALSPEED = 3; // 3
     public static final int MAXSPEED = 30; // 30
@@ -44,7 +47,7 @@ public class Constants {
     public static final double RAD90 = 1.57; // 1.570796327
     public static final double ANGLESENS = 0.25;
     public static final double NEEDLEDIST = 26;
-    public static final double BODYRADIUS = 20;
+    public static final double BODYRADIUS = 25;
 
     public static final int DASHLIMIT = 400;
     public static final int DASHTRIGGER = 300; 

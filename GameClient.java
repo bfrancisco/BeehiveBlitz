@@ -1,6 +1,9 @@
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.io.File;
 
 public class GameClient{
     private GameCanvas canvas;
@@ -9,6 +12,8 @@ public class GameClient{
     private Socket socket;
     private ReadFromServer rfsRunnable;
     private WriteToServer wtsRunnable;
+
+    private BGM bgmPlayer;
 
     public void setGameCanvas(GameCanvas gc){
         canvas = gc;
@@ -36,6 +41,7 @@ public class GameClient{
             rfsRunnable = new ReadFromServer(in);
             wtsRunnable = new WriteToServer(out);
             rfsRunnable.waitForStartMsg();
+            bgmPlayer = new BGM();
         }catch (IOException ex){
             System.out.println("Server not found");
         }
@@ -70,6 +76,9 @@ public class GameClient{
 
                     if (canvas.getGameState() == 0 && serverGameState == 1){
                         canvas.setGameState(1);
+                        if (bgmPlayer.playing()) bgmPlayer.stopBGM();
+                        bgmPlayer = new BGM();
+                        bgmPlayer.playBGM();
                     }
                     else if (canvas.getGameState() == 1 && serverGameState == 2){
                         canvas.setGameState(2);
@@ -90,18 +99,21 @@ public class GameClient{
                             canvas.getYou().bodyPunctured();
                             canvas.getEnemy().addScore(1);
                             canvas.getYou().addScore(-1);
+                            canvas.getYou().playHitSound();
                             // System.out.println("gotpuncutred");
                         }
                         if (enemyPunctured == 1 && !canvas.getEnemy().isInvincible()){
                             canvas.getEnemy().bodyPunctured();
                             canvas.getYou().addScore(1);
                             canvas.getEnemy().addScore(-1);
+                            canvas.getEnemy().getPointSound();
                             // System.out.println("enemyPunctured");
                         }
     
                         if (gotHoney == 1 && !canvas.getYou().justGotHoney()){
                             canvas.getYou().addScore(1);
                             canvas.getYou().gotHoney();
+                            canvas.getYou().getPointSound();
                         }
                         if (enemyHoney == 1 && !canvas.getEnemy().justGotHoney()){
                             canvas.getEnemy().addScore(1);
@@ -112,10 +124,7 @@ public class GameClient{
                             canvas.getYou().toggleDash();
                             canvas.getEnemy().toggleDash();
                         }
-                    }
-                    
-                    
-        
+                    }     
                 }
             }catch (IOException ex){
                 System.out.println("IOException from RFS run");
@@ -137,7 +146,32 @@ public class GameClient{
             }
         }
     }
-
+    public class BGM{
+        public Clip clip;
+        public boolean isPlaying = false;
+        public void playBGM(){
+            try{
+                File file = new File(Constants.BGMUSIC);
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+                clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                isPlaying = true;
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+            catch(Exception e){
+                System.out.println("e");
+            }
+        }
+        public void stopBGM(){
+            clip.stop();
+            isPlaying = false;
+        }
+        public boolean playing(){
+            return isPlaying;
+        }
+    }
+    
     private class WriteToServer implements Runnable{
 
         private DataOutputStream dataOut;

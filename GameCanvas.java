@@ -74,7 +74,7 @@ public class GameCanvas extends JComponent{
         gameState = g;
         if (g == 2){
             menuCounter = 2;
-        }
+        }   
     }
 
     // Sets player ID of GameCanvas instance

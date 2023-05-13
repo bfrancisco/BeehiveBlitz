@@ -105,17 +105,17 @@ public class GameServer{
     }
 
     private class TimerIncrement implements Runnable{
-        Random rand = new Random();
         public void run(){
+        Random rand = new Random();
             while (true){
                 dashTimer++;
                 if (dashTimer == Constants.DASHLIMIT+1){
                     dashTimer = 1;
-                    hx = hy = -1;
+                    hx = hy = -100;
                 }
                 else if (dashTimer == Constants.DASHLIMIT/2){
-                    hx = rand.nextInt(100, Constants.FRAMEWIDTH-100);
-                    hy = rand.nextInt(100, Constants.FRAMEHEIGHT-100);
+                    hx = rand.nextInt(Constants.FRAMEWIDTH - 200) + 100;
+                    hy = rand.nextInt(Constants.FRAMEHEIGHT - 200) + 100;
                 }
                 try{
                     Thread.sleep(10);
