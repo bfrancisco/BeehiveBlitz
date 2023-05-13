@@ -1,3 +1,25 @@
+/**
+    @author James Bryan M. Francisco (222677)
+    @author James Ivan P. Mostajo (224396)
+    @version May 13, 2023
+**/
+/*
+    I have not discussed the Java language code in my program
+    with anyone other than my instructor or the teaching assistants
+    assigned to this course.
+    I have not used Java language code obtained from another student,
+    or any other unauthorized source, either modified or unmodified.
+    If any Java language code or documentation used in my program
+    was obtained from another source, such as a textbook or website,
+    that has been clearly noted with a proper citation in the comments
+    of my program.
+*/
+
+/*
+    This class contains all the codes for the GameCanvas, or the JComponent of the program.
+    This includes all the necessary functions for drawing the graphics of the game, and instances of the Player and Honey class.
+ */
+
 import javax.swing.*;
 import java.awt.geom.*;
 import java.awt.*;
@@ -13,21 +35,21 @@ public class GameCanvas extends JComponent{
     private int gameState; // 0 - home screen, 1 - game proper, 2 - you win/lose
     private Player you;
     private Player enemy;
+    private int yourID;
     private Honey honey;
     private boolean enemyExists = false;
-    private int dashTimer; 
-
-    private int yourID;
+    private int dashTimer;
 
     private BufferedImage startMenuBG;
     private BufferedImage startMenuWait;
-    private int menuCounter; // 0-menu bg, 1-menu waiting, 2-you win/lose
     private BufferedImage bgImage;
     private BufferedImage timeHexagon;
     private BufferedImage timeHexagonGlow;
     private BufferedImage youWinOverlay;
     private BufferedImage youLoseOverlay;
-    private Font font, fontOffset;
+    private int menuCounter; // 0-menu bg, 1-menu waiting, 2-you win/lose
+    
+    private Font font;
     private Color blue, orange;
 
     // for Double-Buffering, in reference of Killer Game Programming in Java by Andrew Davidson
@@ -41,11 +63,13 @@ public class GameCanvas extends JComponent{
         this.setPreferredSize(new Dimension(width, height));
         
     }
-
+    
+    // Returns game state of GameCanvas instance
     public int getGameState(){
         return gameState;
     }
 
+    // Sets game state of GameCanvas instance
     public void setGameState(int g){
         gameState = g;
         if (g == 2){
@@ -53,14 +77,19 @@ public class GameCanvas extends JComponent{
         }
     }
 
+    // Sets player ID of GameCanvas instance
     public void setPlayerID(int i){
         yourID = i;
     }
 
+    // Called when client pressed "S" when in the Menu Screen. 
+    // Sets menuCounter to 1, which changes the menu background to "waiting" image.
     public void pressStart(){
         menuCounter = 1;
     }
 
+    // Called when client pressed "R" when in the Result Screen.
+    // Resets the initial values of all necessary variables for restarting the game.
     public void pressRestart(){
         menuCounter = 0;
         gameState = 0;
@@ -68,10 +97,12 @@ public class GameCanvas extends JComponent{
         enemy.setInitialStats();
     }
 
+    // Returns the state of the menu
     public int getCanvasState(){
         return menuCounter;
     }
 
+    // Sets up all necessary sprites, including Player instances, images, and GUI-related elements.
     public void setUpSprites(){
         if (yourID == 1){
             you = new Player(width/2 - width/4, height/2, Constants.P1SPRITE, Constants.P1SPRITE2);
@@ -100,6 +131,7 @@ public class GameCanvas extends JComponent{
 
     }
 
+    // Draws image when in the Start Screen.
     public void drawStartMenu(Graphics2D g2d, AffineTransform af){
         if (menuCounter == 0)
             g2d.drawImage(startMenuBG, 0, 0, null);
@@ -108,6 +140,7 @@ public class GameCanvas extends JComponent{
         
     }
 
+    // Draws image when in the Result Screen.
     public void drawResult(Graphics2D g2d, AffineTransform af){
         if (gameState == 2){
             if (you.getScore() == Constants.WINSCORE)
@@ -118,12 +151,13 @@ public class GameCanvas extends JComponent{
         
     }
 
+    // Draws background image during Play Screen.
     public void drawBG(Graphics2D g2d, AffineTransform af){
         g2d.drawImage(bgImage, 0, 0, null);
         
         int midX = width/2;
 
-        // draw timer indicators
+        // Draws timer indicators (honey sprites)
         if (gameState == 1){
             for (int i = 100; i <= dashTimer; i += 100){
                 if (dashTimer < 300){
@@ -137,7 +171,7 @@ public class GameCanvas extends JComponent{
             }
         }
         
-        // draw score
+        // Draws score
         String youScoreStr = Integer.toString(you.getScore());
         String enemyScoreStr = Integer.toString(enemy.getScore());
         FontMetrics metrics = g2d.getFontMetrics();
@@ -158,9 +192,9 @@ public class GameCanvas extends JComponent{
         g2d.setTransform(af);
     }
     
+    // In reference to "Killer Game Programming in Java" by Andrew Davidson.
+    // Creates an empty image to be painted by all the elements included in one frame.
     private void gameRender(){
-        // mostly from Killer Game Programming in Java by Andrew Davidson
-
         // create empty image. this will be the image to be PAINTED at the end
         dbImage = createImage(width, height);
         if (dbImage == null){
@@ -198,6 +232,9 @@ public class GameCanvas extends JComponent{
         
     }
 
+    // In reference to "Killer Game Programming in Java" by Andrew Davidson.
+    // Paints generated image from gameRender to the program window.
+    // Imitates what paintComponent does.
     private void paintScreen(){
         Graphics2D g2d;
         try{
@@ -215,6 +252,7 @@ public class GameCanvas extends JComponent{
         // System.out.println(you.getScore() + " | " + enemy.getScore());
     }
 
+    // Timer to constantly update the frames every 30 milliseconds.
     public void SetUpGameUpdate(){
         // https://stackoverflow.com/questions/25025715/javax-swing-timer-vs-java-util-timer-inside-of-a-swing-application
         new java.util.Timer().scheduleAtFixedRate(new TimerTask() {
@@ -230,6 +268,7 @@ public class GameCanvas extends JComponent{
             }}, 0, 30);
     }
 
+    // Handles player collision when collided to window border.
     public void handleBorderCollision(){
         if (you.getX() < 0){
             you.setAngleToIncidence(false);
@@ -248,10 +287,14 @@ public class GameCanvas extends JComponent{
             you.setY(height);
         }
     }
+
+    // Sets dash timer value. Used in GameClient.
     public void setDashTimer(int dT){
         dashTimer = dT;
     }
-    // get methods
+
+    // Getter methods; used in GameClient.
+    
     public Player getYou(){
         return you;
     }
